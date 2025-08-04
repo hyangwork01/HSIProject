@@ -1,0 +1,41 @@
+# @package _global_
+
+defaults:
+  - base
+scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Home/Emptyroom
+scenes_name: Emptyroom
+scenes:
+  - scene_id: '001'
+    scene_path: '001'
+    filter_list: []
+    rigidbody_list: [0, 1, 2, 3]
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: ./meshes/Assets/Floor_Floor/Floor_flatten.usda
+        obj_name: Floor
+        obj_translate: [-0.587149977684021, -0.06242990493774414, 
+              -0.05999999865889549]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+      - obj_id: 1
+        obj_path: ./meshes/Assets/Wall_Wall/Wall_flatten.usda
+        obj_name: Wall
+        obj_translate: [-0.587149977684021, -0.06242990493774414, 
+              1.399999976158142]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+      - obj_id: 2
+        obj_path: ./meshes/Assets/Other_VDzBDUNnRUMIYQFBAAAA/Other_flatten.usda
+        obj_name: Other
+        obj_translate: [-0.73099225, 2.212571799670042, 1.6]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [2.2541890144348145, 3.9833824634552, 1.0]
+      - obj_id: 3
+        obj_path: 
+          ./meshes/Assets/Other_SJFVLAWO7PRR6IREKE888888/Other_flatten.usda
+        obj_name: Other
+        obj_translate: [-0.48503340901152997, -2.3374289372205577, 
+              1.0638498807907104]
+        obj_rotateXYZW: [0.0, 0.0, -1.0, 6.123233995736766e-17]
+        obj_scale: [1.0, 1.039600133895874, 1.0]

@@ -1,0 +1,5 @@
+# @package _global_
+
+scenes_abs_path: ""
+scenes_name: ""
+scenes: []
