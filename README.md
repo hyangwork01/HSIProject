@@ -142,7 +142,7 @@ A set of example scripts are provided in the `examples` folder. These present a 
 
 The simplest example for training an agent on the steering task is:
 ```bash
-PYTHON_PATH protomotions/train_agent.py +exp=steering_mlp +robot=h1 +simulator=<simulator> +experiment_name=h1_steering
+PYTHON_PATH core/train_agent.py +exp=steering_mlp +robot=h1 +simulator=<simulator> +experiment_name=h1_steering
 ```
 
 <div float="center">
@@ -176,10 +176,10 @@ Then select the robot you are training. For example, the SMPL humanoid robot is 
 In the first stage, you need to train a general motion tracker. At each step, this model receives the next K future poses.
 The second phase trains the masked mimic model to reconstruct the actions of the expert tracker trained in the first stage.
 
-1. **Train full body tracker:** Run `PYTHON_PATH protomotions/train_agent.py +exp=full_body_tracker/transformer_flat_terrain +robot=smpl +simulator=isaacgym motion_file=<motion file path> +experiment_name=full_body_tracker`
+1. **Train full body tracker:** Run `PYTHON_PATH core/train_agent.py +exp=full_body_tracker/transformer_flat_terrain +robot=smpl +simulator=isaacgym motion_file=<motion file path> +experiment_name=full_body_tracker`
 2. Find the checkpoint of the first phase. It will be stored in `results/<experiment_name>/last.ckpt`. The next training should point to the folder and not the checkpoint.
-3. **Train MaskedMimic:** Run `PYTHON_PATH protomotions/train_agent.py +exp=masked_mimic/flat_terrain +robot=smpl +simulator=isaacgym motion_file=<motion file path> agent.config.expert_model_path=<path to phase 1 folder>`
-4. **Inference:** For an example of user-control, run `PYTHON_PATH protomotions/eval_agent.py +robot=smpl +simulator=isaacgym +opt=[masked_mimic/tasks/user_control] checkpoint=<path to maskedmimic checkpoint>`
+3. **Train MaskedMimic:** Run `PYTHON_PATH core/train_agent.py +exp=masked_mimic/flat_terrain +robot=smpl +simulator=isaacgym motion_file=<motion file path> agent.config.expert_model_path=<path to phase 1 folder>`
+4. **Inference:** For an example of user-control, run `PYTHON_PATH core/eval_agent.py +robot=smpl +simulator=isaacgym +opt=[masked_mimic/tasks/user_control] checkpoint=<path to maskedmimic checkpoint>`
 
 add `+terrain=flat` to use a default flat terrain (this reduces loading time).
 
@@ -199,7 +199,7 @@ an agent to produce motions with similar distributional characteristics to a giv
 motion dataset. AMP can be combined with a task, encouraging the agent to solve the
 task with the provided motions.
 
-1. Run `PYTHON_PATH protomotions/train_agent.py +exp=amp_mlp motion_file=<path to motion file>`.
+1. Run `PYTHON_PATH core/train_agent.py +exp=amp_mlp motion_file=<path to motion file>`.
 2. Choose your robot, for example `+robot=amp`.
 3. Set simulator, for example `+simulator=genesis`.
 
@@ -219,7 +219,7 @@ a low-level skill generating policy. The low-level policy is conditioned on a la
 variable z. Each latent variable represents a different motion. ASE requires a diverse
 dataset of motions, as opposed to AMP that can (and often should) be trained on a single (or small set of motions) motion.
 
-Run `PYTHON_PATH protomotions/train_agent.py +exp=ase_mlp motion_file=<path to motion dataset>`
+Run `PYTHON_PATH core/train_agent.py +exp=ase_mlp motion_file=<path to motion dataset>`
 
 In order to train the sword-and-shield character, as in the original paper:
 1. Download the data from [ASE](https://github.com/nv-tlabs/ASE)
@@ -253,7 +253,7 @@ To properly log and track your experiments we suggest using "Weights and Biases"
 
 # Evaluation/Visualization
 
-To evaluate the trained agent, run `PYTHON_PATH protomotions/eval_agent.py +robot=<robot> +simulator=<simulator> motion_file=<path to motion file> checkpoint=results/<experiment name>/last.ckpt`.
+To evaluate the trained agent, run `PYTHON_PATH core/eval_agent.py +robot=<robot> +simulator=<simulator> motion_file=<path to motion file> checkpoint=results/<experiment name>/last.ckpt`.
 
 We provide a set of pre-defined keyboard controls.
 
@@ -289,7 +289,7 @@ The data processing pipeline follows the following procedure:
 3. Create a YAML file with the data information (filename, FPS, textual labels, etc...).
 4. Package (pre-process) the data for faster loading.
 
-Motions can be visualized via kinematic replay by running `PYTHON_PATH protomotions/scripts/play_motion.py <motion file> <simulator isaacgym/isaaclab/genesis> <robot type>`.
+Motions can be visualized via kinematic replay by running `PYTHON_PATH core/scripts/play_motion.py <motion file> <simulator isaacgym/isaaclab/genesis> <robot type>`.
 
 
 ## Download Data

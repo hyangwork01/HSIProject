@@ -210,9 +210,9 @@ def construct_model(robot_name: str, keypoint_names: Sequence[str]):
             )
 
     if robot_name == "h1":
-        humanoid_mjcf = mjcf.from_path("protomotions/data/assets/mjcf/h1.xml")
+        humanoid_mjcf = mjcf.from_path("core/data/assets/mjcf/h1.xml")
     elif robot_name == "g1":
-        humanoid_mjcf = mjcf.from_path("protomotions/data/assets/mjcf/g1.xml")
+        humanoid_mjcf = mjcf.from_path("core/data/assets/mjcf/g1.xml")
     else:
         raise ValueError(f"Unknown robot name: {robot_name}")
     humanoid_mjcf.worldbody.add(
@@ -588,7 +588,7 @@ def retarget_motion(motion: SkeletonMotion, robot_type: str, render: bool = Fals
         )
     else:
         skeleton_tree = SkeletonTree.from_mjcf(
-            f"protomotions/data/assets/mjcf/{robot_type}.xml"
+            f"core/data/assets/mjcf/{robot_type}.xml"
         )
         retargeted_motion = create_skeleton_motion(
             retargeted_poses, retargeted_trans, skeleton_tree, global_translations, fps

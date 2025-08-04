@@ -5,6 +5,9 @@
     "version": "0.2.0",
     "configurations": [
         
+
+
+        
         
         {
             "name": "Current File",
@@ -18,7 +21,7 @@
             "name": "TEST: Read Masked Mimic",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/protomotions/train_agent.py",
+            "program": "${workspaceFolder}/core/train_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+exp=masked_mimic/flat_terrain",
@@ -35,7 +38,7 @@
             "name": "EXAMPLE Debugger: Train Steering MLP",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/protomotions/train_agent.py",
+            "program": "${workspaceFolder}/core/train_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+exp=steering_mlp",
@@ -49,7 +52,7 @@
             "name": "MaskedMimic Debugger: Train Full-Body Tracker",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/protomotions/train_agent.py",
+            "program": "${workspaceFolder}/core/train_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+exp=full_body_tracker/transformer_flat_terrain",
@@ -65,7 +68,7 @@
             "name": "MaskedMimic Debugger: Train Masked Mimic",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/protomotions/train_agent.py",
+            "program": "${workspaceFolder}/core/train_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+exp=masked_mimic/flat_terrain",
@@ -82,7 +85,7 @@
             "name": "MaskedMimic Debugger: Eval Full-Body Tracker",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/protomotions/eval_agent.py",
+            "program": "${workspaceFolder}/core/eval_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+robot=smpl",
@@ -96,7 +99,7 @@
             "name": "MaskedMimic Debugger: Eval Masked Mimic User Control",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/protomotions/eval_agent.py",
+            "program": "${workspaceFolder}/core/eval_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+robot=smpl",

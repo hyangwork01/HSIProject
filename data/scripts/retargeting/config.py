@@ -64,7 +64,7 @@ def h1_mapping():
         {"R_Elbow": "[0, np.pi/2, 0]"},
     ]
 
-    asset_file = "protomotions/data/assets/mjcf/h1_original.xml"
+    asset_file = "core/data/assets/mjcf/h1_original.xml"
 
     return EasyDict(
         extend_config=extend_config,
@@ -124,7 +124,7 @@ def g1_mapping():
         {"R_Elbow": "[0, np.pi/2, 0]"},
     ]
 
-    asset_file = "protomotions/data/assets/mjcf/g1_original.xml"
+    asset_file = "core/data/assets/mjcf/g1_original.xml"
 
     return EasyDict(
         extend_config=extend_config,
@@ -177,7 +177,7 @@ def h1_no_head_mapping():
         {"R_Elbow": "[0, np.pi/2, 0]"},
     ]
 
-    asset_file = "protomotions/data/assets/mjcf/h1_original.xml"
+    asset_file = "core/data/assets/mjcf/h1_original.xml"
 
     return EasyDict(
         extend_config=extend_config,
@@ -215,7 +215,7 @@ def h1_no_head_no_hands_mapping():
         {"R_Elbow": "[0, np.pi/2, 0]"},
     ]
 
-    asset_file = "protomotions/data/assets/mjcf/h1_original.xml"
+    asset_file = "core/data/assets/mjcf/h1_original.xml"
 
     return EasyDict(
         extend_config=extend_config,
@@ -290,7 +290,7 @@ def smplx_with_limits_mapping():
 
     smpl_pose_modifier = []
 
-    asset_file = "protomotions/data/assets/mjcf/smplx_humanoid_with_limits.xml"
+    asset_file = "core/data/assets/mjcf/smplx_humanoid_with_limits.xml"
 
     return EasyDict(
         extend_config=extend_config,

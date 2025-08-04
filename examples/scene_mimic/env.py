@@ -1,5 +1,5 @@
-from protomotions.envs.mimic.env import Mimic
-from protomotions.utils.scene_lib import (
+from core.envs.mimic.env import Mimic
+from core.utils.scene_lib import (
     Scene,
     SceneObject,
     ObjectOptions,

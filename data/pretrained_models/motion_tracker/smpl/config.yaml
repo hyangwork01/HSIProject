@@ -43,21 +43,21 @@ eval_overrides:
       enable_height_termination: false
       mimic_early_termination: null
 agent:
-  _target_: protomotions.agents.mimic.agent.Mimic
+  _target_: core.agents.mimic.agent.Mimic
   _recursive_: false
   config:
     model:
-      _target_: protomotions.agents.ppo.model.PPOModel
+      _target_: core.agents.ppo.model.PPOModel
       _recursive_: false
       config:
         actor:
-          _target_: protomotions.agents.ppo.model.PPOActor
+          _target_: core.agents.ppo.model.PPOActor
           _recursive_: false
           num_out: ${robot.number_of_actions}
           config:
             actor_logstd: -2.9
             mu_model:
-              _target_: protomotions.agents.common.transformer.Transformer
+              _target_: core.agents.common.transformer.Transformer
               _recursive_: false
               num_out: ${robot.number_of_actions}
               config:
@@ -71,7 +71,7 @@ agent:
                 use_layer_norm: false
                 input_models:
                   obs_mlp:
-                    _target_: protomotions.agents.common.mlp.MLP_WithNorm
+                    _target_: core.agents.common.mlp.MLP_WithNorm
                     _recursive_: false
                     num_in: ${robot.self_obs_size}
                     num_out: ${...transformer_token_size}
@@ -90,7 +90,7 @@ agent:
                   mimic_target_poses: ${agent.config.modules.transformer_mimic_target_pose_model}
                   terrain: ${agent.config.modules.transformer_terrain}
                 output_model:
-                  _target_: protomotions.agents.common.mlp.MLP
+                  _target_: core.agents.common.mlp.MLP
                   _recursive_: false
                   num_in: ${..transformer_token_size}
                   num_out: ${robot.number_of_actions}
@@ -109,13 +109,13 @@ agent:
           _target_: torch.optim.Adam
           lr: 2.0e-05
         critic:
-          _target_: protomotions.agents.common.mlp.MultiHeadedMLP
+          _target_: core.agents.common.mlp.MultiHeadedMLP
           _recursive_: false
           num_out: 1
           config:
             input_models:
               self_obs:
-                _target_: protomotions.agents.common.common.Flatten
+                _target_: core.agents.common.common.Flatten
                 _recursive_: false
                 num_in: ${robot.self_obs_size}
                 num_out: ${.num_in}
@@ -126,7 +126,7 @@ agent:
               mimic_target_poses: ${agent.config.modules.mlp_mimic_target_pose_model}
               terrain: ${agent.config.modules.mlp_terrain}
             trunk:
-              _target_: protomotions.agents.common.mlp.MLP
+              _target_: core.agents.common.mlp.MLP
               _recursive_: false
               num_out: 1
               config:
@@ -186,7 +186,7 @@ agent:
     eval_num_episodes: 1
     modules:
       transformer_mimic_target_pose_model:
-        _target_: protomotions.agents.common.mlp.MLP_WithNorm
+        _target_: core.agents.common.mlp.MLP_WithNorm
         _recursive_: false
         num_in: ${env.config.mimic_target_pose.num_obs_per_target_pose}
         num_out: ${agent.config.model.config.actor.config.mu_model.config.transformer_token_size}
@@ -213,7 +213,7 @@ agent:
             activation: relu
             use_layer_norm: false
       mlp_mimic_target_pose_model:
-        _target_: protomotions.agents.common.common.Flatten
+        _target_: core.agents.common.common.Flatten
         num_in: ${eval:${env.config.mimic_target_pose.num_future_steps}*${env.config.mimic_target_pose.num_obs_per_target_pose}}
         num_out: ${.num_in}
         config:
@@ -221,7 +221,7 @@ agent:
           normalize_obs: true
           norm_clamp_value: 5
       transformer_terrain:
-        _target_: protomotions.agents.common.mlp.MLP_WithNorm
+        _target_: core.agents.common.mlp.MLP_WithNorm
         num_in: ${terrain.config.terrain_obs_num_samples}
         num_out: ${agent.config.model.config.actor.config.mu_model.config.transformer_token_size}
         config:
@@ -236,7 +236,7 @@ agent:
             activation: relu
             use_layer_norm: false
       mlp_terrain:
-        _target_: protomotions.agents.common.common.Flatten
+        _target_: core.agents.common.common.Flatten
         num_in: ${terrain.config.terrain_obs_num_samples}
         num_out: ${.num_in}
         config:
@@ -244,7 +244,7 @@ agent:
           normalize_obs: true
           norm_clamp_value: 5
 env:
-  _target_: protomotions.envs.mimic.env.Mimic
+  _target_: core.envs.mimic.env.Mimic
   _recursive_: false
   config:
     experiment_name: ${experiment_name}
@@ -521,7 +521,7 @@ robot:
     fix_base_link: null
     default_dof_drive_mode: 1
     robot_type: smpl_humanoid
-    asset_root: protomotions/data/assets
+    asset_root: core/data/assets
     self_collisions: true
     filter_ints:
     - 0
@@ -563,8 +563,8 @@ robot:
       decimation: 2
       substeps: 2
 simulator:
-  _target_: protomotions.simulator.isaaclab.simulator.IsaacLabSimulator
-  _config_target_: protomotions.simulator.isaaclab.config.IsaacLabSimulatorConfig
+  _target_: core.simulator.isaaclab.simulator.IsaacLabSimulator
+  _config_target_: core.simulator.isaaclab.config.IsaacLabSimulatorConfig
   _recursive_: false
   config:
     w_last: false
@@ -596,13 +596,13 @@ simulator:
     viewer_record_dir: output/recordings/viewer
     experiment_name: ${experiment_name}
 motion_lib:
-  _target_: protomotions.utils.motion_lib.MotionLib
+  _target_: core.utils.motion_lib.MotionLib
   motion_file: ${motion_file}
   ref_height_adjust: 0.0
   fix_motion_heights: true
 motion_file: null
 terrain:
-  _target_: protomotions.envs.base_env.env_utils.terrains.terrain.Terrain
+  _target_: core.envs.base_env.env_utils.terrains.terrain.Terrain
   config:
     terrain_composition: curriculum
     map_length: 20.0

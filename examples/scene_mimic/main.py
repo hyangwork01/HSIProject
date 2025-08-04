@@ -10,7 +10,7 @@ simulation_app = app_launcher.app
 
 import torch
 from omegaconf import OmegaConf
-from protomotions.utils.config_utils import *
+from core.utils.config_utils import *
 from examples.scene_mimic.env import SceneMimic
 
 
@@ -18,17 +18,17 @@ from examples.scene_mimic.env import SceneMimic
 先导入一个基础的后导入一个特定任务的，可以实现配置的覆盖，基于基础的然后配置覆盖
 """
 # Define configuration paths
-base_motion_manager_config_path = "protomotions/config/motion_manager/base_manager.yaml"
-mimic_motion_manager_config_path = "protomotions/config/motion_manager/mimic_manager.yaml"
-base_env_config_path = "protomotions/config/env/base_env.yaml"
-env_config_path = "protomotions/config/env/mimic.yaml"
-base_robot_config_path = "protomotions/config/robot/base.yaml"
-robot_config_path = "protomotions/config/robot/smpl.yaml"
-base_simulator_config_path = "protomotions/config/simulator/base.yaml"
-physx_simulator_config_path = "protomotions/config/simulator/physx.yaml"
-physx_isaaclab_simulator_config_path = "protomotions/config/simulator/physx_isaaclab.yaml"
-isaaclab_simulator_config_path = "protomotions/config/simulator/isaaclab.yaml"
-terrain_config_path = "protomotions/config/terrain/flat.yaml"
+base_motion_manager_config_path = "core/config/motion_manager/base_manager.yaml"
+mimic_motion_manager_config_path = "core/config/motion_manager/mimic_manager.yaml"
+base_env_config_path = "core/config/env/base_env.yaml"
+env_config_path = "core/config/env/mimic.yaml"
+base_robot_config_path = "core/config/robot/base.yaml"
+robot_config_path = "core/config/robot/smpl.yaml"
+base_simulator_config_path = "core/config/simulator/base.yaml"
+physx_simulator_config_path = "core/config/simulator/physx.yaml"
+physx_isaaclab_simulator_config_path = "core/config/simulator/physx_isaaclab.yaml"
+isaaclab_simulator_config_path = "core/config/simulator/isaaclab.yaml"
+terrain_config_path = "core/config/terrain/flat.yaml"
 motion_file = "data/motions/smpl_humanoid_sit_armchair.npy"
 
 # Load and merge configurations

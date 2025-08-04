@@ -7,17 +7,17 @@ simulation_app = app_launcher.app
 import torch
 import time
 from rich.progress import track
-from protomotions.simulator.isaaclab.config import IsaacLabSimulatorConfig, IsaacLabSimParams
-from protomotions.simulator.isaaclab.simulator import IsaacLabSimulator
-from protomotions.simulator.base_simulator.config import (
+from core.simulator.isaaclab.config import IsaacLabSimulatorConfig, IsaacLabSimParams
+from core.simulator.isaaclab.simulator import IsaacLabSimulator
+from core.simulator.base_simulator.config import (
     RobotConfig,
     RobotAssetConfig,
     InitState,
     ControlConfig,
     ControlType,
 )
-from protomotions.envs.base_env.env_utils.terrains.flat_terrain import FlatTerrain
-from protomotions.envs.base_env.env_utils.terrains.terrain_config import TerrainConfig
+from core.envs.base_env.env_utils.terrains.flat_terrain import FlatTerrain
+from core.envs.base_env.env_utils.terrains.terrain_config import TerrainConfig
 
 # Create robot asset configuration
 robot_asset_config = RobotAssetConfig(

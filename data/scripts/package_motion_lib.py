@@ -9,8 +9,8 @@ import math
 from hydra.utils import get_class
 from hydra import compose, initialize
 
-from protomotions.utils.motion_lib import MotionLib
-from protomotions.simulator.base_simulator.config import RobotConfig
+from core.utils.motion_lib import MotionLib
+from core.simulator.base_simulator.config import RobotConfig
 
 from omegaconf import OmegaConf, ListConfig
 
@@ -33,7 +33,7 @@ def main(
         humanoid_type: str = "smpl",
         num_data_splits: int = None,
 ):
-    config_path = "../../protomotions/config/robot"
+    config_path = "../../core/config/robot"
 
     with initialize(version_base=None, config_path=config_path, job_name="test_app"):
         cfg = compose(config_name=humanoid_type)
