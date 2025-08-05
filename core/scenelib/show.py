@@ -3,6 +3,7 @@ from isaaclab.app import AppLauncher
 headless = False
 app_launcher = AppLauncher({"headless": headless})
 simulation_app = app_launcher.app
+from omegaconf import OmegaConf
 
 import torch
 
@@ -117,16 +118,17 @@ terrain_config = TerrainConfig()
 terrain = FlatTerrain(config=terrain_config, num_envs=simulator_config.num_envs, device=device)
 
 
-
+scene_cfg_path = "core/config/scene/object_bed.yaml"
+scene_cfg = OmegaConf.load(scene_cfg_path)
 # Create SceneLib instance
-scene_lib = SceneLib(num_envs=simulator_config.num_envs, device=device)
+scene_lib = SceneLib(scene_cfg,num_envs=simulator_config.num_envs, device=device)
 
 # Create scenes
 # scene_lib.create_task_scenes("sitchair", terrain,objects_path="/home/luohy/MyRepository/MyDataSets/Data/Objects")
 # scene_lib.create_task_scenes("home", terrain,objects_path="/home/luohy/MyRepository/MyDataSets/Data/Objects")
 # scene_lib.create_task_scenes("sitbed", terrain,objects_path="/home/luohy/MyRepository/MyDataSets/Data/Objects")
 # scene_lib.create_task_scenes("muti_chair", terrain,objects_path="/home/luohy/MyRepository/MyDataSets/Data/Objects")
-scene_lib.create_task_scenes("home_json", terrain,objects_path="/home/luohy/MyRepository/MyDataSets/Data/Objects")
+scene_lib.create_scenes( terrain)
 
 
 # Create and initialize the simulator

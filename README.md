@@ -1,5 +1,4 @@
-# ProtoMotions: Physics-based Character Animation
-*“Primitive or fundamental types of movement that serve as a basis for more complex motions.”*
+# Humanoid-Object Interaction Challenge
 
 - [What is this?](#what-is-this)
 - [Installation guide](#installation)
@@ -8,102 +7,20 @@
 
 # What is this?
 
-This codebase contains our efforts in building interactive physically-simulated virtual agents.
-It supports both IsaacGym and IsaacLab.
+This platform serves as the foundational training framework for developing and evaluating Humanoid–Object Interaction policies in the Humanoid–Object Interaction Challenge track of the ICCV 2025 Workshop on Human–Robot–Scene Interaction and Collaboration.
 
-<div float="center">
-    <img src="assets/sofa.gif" width="300"/>
-    <img src="assets/vr-cartwheel.gif" width="300"/>
-    <img src="assets/reach.gif" width="300"/>
-    <img src="assets/path.gif" width="300"/>
-</div>
-
-# Known Issues
-
-- **Genesis**:
-  - Does not yet support scene creation. Waiting for simulator to support unique objects for each humanoid.
-  - No support for keyboard control.
-  - Does not support the capsule humanoids (e.g., SMPL), due to lack of proper MJCF parsing.
-- **IsaacLab**:
-  - Sword and Shield and AMP characters are not fully tested. For animation purposes, we suggest focusing on the SMPL character.
-
-# Changelog
-
-<details>
-<summary>v2.0</summary>
-
-- Code cleanup and refactoring.
-  - Less inheritance and dependencies. This may lead to more code duplication, but much easier to parse and adapt.
-  - Moved common logic into components. These components are configurable to determine their behavior.
-  - All components and tasks return observation dictionaries. The network classes pick which observations to use in each component.
-- Extracted simulator logic from task.
-  - Common logic handles conversion to simulator-specific ordering.
-  - This should make it easier to extend to new simulators.
-- Added [Genesis](https://genesis-world.readthedocs.io/en/latest/index.html) support.
-- New retargeting pipeline, using [Mink](https://github.com/kevinzakka/mink).
-
-</details>
-<details>
-<summary>v1.0</summary>
-
-Public release!
-
-</details>
 
 > **Important:**</br>
 > This codebase builds heavily on [Hydra](https://hydra.cc/) and [OmegaConfig](https://omegaconf.readthedocs.io/).<br>
 > It is recommended to familiarize yourself with these libraries and how config composition works.
 
+
 # Installation
 
-This codebase supports IsaacGym, IsaacLab, and Genesis. You can install the simulation of your choice, and
-the simulation backend is selected via the configuration file.
-
-First run `git lfs fetch --all` to fetch all files stored in git-lfs.
-
-<details>
-<summary>IsaacGym</summary>
-
-1. Install [IsaacGym](https://developer.nvidia.com/isaac-gym)
-```bash
-wget https://developer.nvidia.com/isaac-gym-preview-4
-tar -xvzf isaac-gym-preview-4
-```
-
-Install IsaacGym Python API:
-
-```bash
-pip install -e isaacgym/python
-```
-2. Once IG and PyTorch are installed, from the repository root install the ProtoMotions package and its dependencies with:
-```bash
-pip install -e .
-pip install -r requirements_isaacgym.txt
-pip install -e isaac_utils
-pip install -e poselib
-```
-Set the `PYTHON_PATH` env variable (not really needed, but helps the instructions stay consistent between sim and gym).
-```bash
-alias PYTHON_PATH=python
-```
-
-### Potential Issues
-
-If you have python errors:
-
-```bash
-export LD_LIBRARY_PATH=${CONDA_PREFIX}/lib/
-```
-
-If you run into memory issues -- try reducing the number of environments by adding to the command line `num_envs=1024`
-
-</details>
-
-<details>
-<summary>IsaacLab</summary>
+Our codebase only supports using IsaacLab to participate in the Humanoid–Object Interaction Challenge track, so please follow the steps below to install IsaacLab and then set up the required dependencies:
 
 1. Install [IsaacLab](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/index.html)
-2. Once IsaacLab is installed, from the repository root install the ProtoMotions package and its dependencies with:
+2. Once IsaacLab is installed, from the repository root install the package and its dependencies with:
 3. Set `PYTHON_PATH` to point at the `isaaclab.sh` script
 ```bash
 For Linux: alias PYTHON_PATH="<isaac_lab_path> -p"
@@ -117,24 +34,7 @@ PYTHON_PATH -m pip install -e isaac_utils
 PYTHON_PATH -m pip install -e poselib
 ```
 
-</details>
-<details>
-<summary>Genesis</summary>
-
-1. Install [Genesis](https://genesis-world.readthedocs.io/en/latest/index.html), install using **python 3.10**.
-2. Once Genesis is installed, from the repository root install the ProtoMotions package and its dependencies with:
-```bash
-pip install -e .
-pip install -r requirements_genesis.txt
-pip install -e isaac_utils
-pip install -e poselib
-```
-Set the `PYTHON_PATH` env variable (not really needed, but helps the instructions stay consistent between sim and gym).
-```bash
-alias PYTHON_PATH=python
-```
-
-</details>
+Once IsaacLab and the basic dependencies have been installed as described above, we can begin training our agent.
 
 # Training Your Agent
 

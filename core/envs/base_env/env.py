@@ -539,6 +539,12 @@ class BaseEnv:
         )
 
         self.scene_lib: SceneLib = None
+        scene_cfg = getattr(self.config, "scene", None)
+
+        if scene_cfg is None or scene_cfg.get("scenes") is None:
+            return
+        self.scene_lib = SceneLib(scene_cfg,num_envs=self.num_envs, device=self.device)
+        self.scene_lib.create_scenes(self.terrain)
 
 
     """

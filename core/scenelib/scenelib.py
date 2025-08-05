@@ -174,7 +174,7 @@ class SceneLib:
 
     Note: SceneObjects no longer have explicit IDs; their order defines their unique index.
     """
-    def __init__(self, num_envs: int,device: str = "cpu"):
+    def __init__(self,cfg, num_envs: int,device: str = "cpu"):
         """
         Args:
             config: Dictionary containing keys:
@@ -197,99 +197,103 @@ class SceneLib:
         self.motion_starts = None   # Starting index in the unified tensor for each object
         self.motion_dts = None      # Delta time for each object's motion
         self.motion_num_frames = None  # Number of frames in each object's motion
-        self.task = None
-
-    def _gettask(self, name: str) -> Type:
-        """
-        获取任务类
-        """
-        task = None
-        name = name.lower()
-        if name == "sitchair":
-            from core.scenelib.task.sitchair import TaskScene as task
-        elif name == "sitbed":
-            from core.scenelib.task.sitbed import TaskScene as task
-        elif name == "home":
-            from core.scenelib.task.home import TaskScene as task
-        elif name == "muti_chair":
-            from core.scenelib.task.muti_chair import TaskScene as task
-        elif name == "home_json":
-            from core.scenelib.task.home_json import TaskScene as task
-        # TODO
-
-        if task is None:
-            raise ValueError(f"Task '{name}' not found.")
-        return task
-    def print_expected_path():
-        expected = """
-        objects_path/
-        └── Object/
-            ├── chair/
-            │   ├── 001/
-            │   └── 002/
-            └── table/
-                └── 001/
-                    └── instance.usd
-                    └── rigidbody.usd
-                    └── collision.usd                    
-        """
-
-        """
-        objects_path/
-        ├── Object[存放场景使用的物体]/
-        │   ├── chair/
-        │   │   ├── 001/
-        │   │   └── 002/
-        │   └── table/
-        │       └── 001/
-        │           └── instance.usd [物体资产的USD文件]
-        │           └── Materials [存放这个物体资产需要的相关材质]
-        │           └── ...
-        └── Layout[存放场景]/
-            ├── 001/
-                └── scene.usd [场景USD文件]
-                └── Layout.json [场景中每个物体的布局信息]
-                └── ...
-        """
-        header = "======= Expected Structure ========="
         
-        print("The Objects path should be structured as follows:\n")
-        print(header)
-        print(expected)
-        print("="* len(header))
-    # def get_objects_path(self,objects_path: str):
-    #     """
-    #     访问Object_path,然后读取里面所有的instance.usd文件。使用请按照usd_paths["rigid"]["chair"]来获取,使用前请排序
-    #     """
-        
-    #     root = Path(objects_path)
-    #     usd_paths: dict[str, dict[str, list[str]]] = {}
-    #     if not root.is_dir():
-    #         raise ValueError(f"Objects path '{objects_path}' 不存在或不是目录。")
-    #     for usd_file in root.rglob("*.usd"):
-    #         parts     = usd_file.parts
-    #         type_name = parts[-3]
-    #         attribute = usd_file.stem
-    #         abs_path  = str(usd_file.resolve())
-    #         usd_paths.setdefault(attribute, {}) \
-    #                  .setdefault(type_name, []) \
-    #                  .append(abs_path)
-    #     return usd_paths    
+        self.cfg = cfg
+            
 
-    # 代码结构优化，create_task_scenes方法中，只实现辨别场景是否参数齐全，创建环境由create_scenes方法实现
-    def create_task_scenes(self,task:str,terrain: Terrain,objects_path: str = "/home/luohy/MyRepository/MyDataSets",assign_method: str = "sequential", replicate_method: str = "random",create_type:str = "single") -> List[Scene]:
-        if objects_path == "":
-            # 打印所希望的usd数据集结构
-            self.print_expected_path()
-            raise ValueError("Objects path must be provided.")
+    def create_single_scene(self,scene_id) -> Scene:
+        flag = False
+        scenes =self.cfg.get("scenes",[])
+        scenes_abspath = self.cfg.get("scenes_abspath")
+        scenes_name = self.cfg.get("scenes_name")
+        for scene in scenes:
+            if scene.get("scene_id") == scene_id:
+                from core.scenelib.utils.usd_utils import compute_usd_dims
 
-        # # 获取objects_path中所有的路径
-        # usd_paths = self.get_objects_path(objects_path)
+                flag = True
+                scene_path = scene.get("scene_path")
+                scene_abspath = os.path.join(scenes_abspath,scene_path)
+                filter_list = scene.get("filter_list")
+                rigidbody_list = scene.get("rigidbody_list")
+                articulation_list = scene.get("articulation_list")
+                print(f"About to create the “{scenes_name}” scene at path: {scene_abspath}")
+                objects_list = []
+                idx = 0
+                for obj in scene.get("objects"):
+                    obj_id = obj.get("obj_id")
+                    if obj_id in filter_list:
+                        continue
+                    obj_abspath = os.path.join(scene_abspath,obj.get("obj_path"))
+                    obj_translate = obj.get("obj_translate")
+                    obj_rotateXYZW = obj.get("obj_rotateXYZW")
+                    obj_scale = obj.get("obj_scale")
+                    obj_name = obj.get("obj_name")
+                    if obj_id in rigidbody_list:
+                        object_options = RigidOptions(
+                            kinematic_enabled=False,
+                            density=1000,
+                            )
+                        min_pt, max_pt = compute_usd_dims(obj_abspath)
+                        min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
+                        max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]    
+                        object = SceneObject(
+                            object_path=obj_abspath,
+                            options=object_options,
+                            translation=obj_translate,    
+                            rotation=obj_rotateXYZW,
+                            scale=obj_scale,
+                            object_type= "rigid",
+                            id=idx,
+                            object_dims = (min_x, max_x, min_y, max_y, min_z, max_z), # 除过scale后的尺寸
+                        )
+                        objects_list.append(object)
+                        print(f"Create rigidbody object,Idx: {idx}, obj_id: {obj_id}, obj_name: {obj_name}") 
+                    elif obj_id in articulation_list:
+                        min_pt, max_pt = compute_usd_dims(obj["Objpath"])
+                        min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
+                        max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]
 
-        task = self._gettask(task)
-        taskscene = task(terrain,self.num_envs,objects_path,assign_method,replicate_method,create_type)
+                        object_options = ArticulationOptions(
+                            density=1000,
+                            kinematic_enabled=True,
+                            articulation_enabled=True,
+                            enabled_self_collisions=False,
+                            fix_root_link=True,
+                            )
+                        object = SceneObject(
+                            object_path=obj_abspath,
+                            options=object_options,
+                            translation=obj_translate,    
+                            rotation=obj_rotateXYZW,
+                            scale=obj_scale,
+                            object_type= "articulation",
+                            id=idx,
+                            object_dims = (min_x, max_x, min_y, max_y, min_z, max_z),
+                        )
+                        objects_list.append(object)
+                        print(f"Create articulation object,Idx: {idx}, obj_id: {obj_id}, obj_name: {obj_name}")                        
+                    else:
+                        raise ValueError(f"Object {obj_id} is not in the rigidbody_list or articulation_list.")
+                    idx += 1
+                break
+        if flag == False:
+            raise ValueError(f"Scene {scene_id} does not exist in the config file.")
+        return Scene(objects=objects_list)
 
-        assigned_scenes = taskscene.create_scenes() 
+    def create_scenes(self,terrain: Terrain,scene_id: str = None) -> List[Scene]:
+        if scene_id is None:
+            scenes = self.cfg.get("scenes")
+            scene_id = scenes[0].get("scene_id")
+        scenes_list = []
+
+        scene = self.create_single_scene(scene_id)
+        scenes_list.append(scene)
+        assigned_scenes = list(scenes_list)
+        num_scenes = len(scenes_list)
+        if num_scenes < self.num_envs:
+            for i in range(self.num_envs - num_scenes):
+                scene = copy.deepcopy(assigned_scenes[0])
+                assigned_scenes.append(scene)
 
         rigid_objects_counts = []
         articulation_objects_counts = []
@@ -339,6 +343,10 @@ class SceneLib:
         # TODO:后续需要去优化object的motion的读取等。self.combine_object_motions()
         return assigned_scenes
     
+
+
+
+
     @property
     def total_spawned_scenes(self) -> int:
         """Returns the total number of scenes that were spawned."""
@@ -362,88 +370,88 @@ class SceneLib:
 
 # ----------------------------------------------------------------------------
 # Example usage:
-if __name__ == "__main__":
-    import torch
+# if __name__ == "__main__":
+#     import torch
     
-    # Define a dummy Terrain for example usage
-    class DummyTerrain:
-        def __init__(self):
-            self.num_scenes_per_column = 2
-            self.spacing_between_scenes = 5.0
-            self.border = 2.0
-            self.horizontal_scale = 1.0
-            self.scene_y_offset = 0.0
-            self.device = "cpu"
+#     # Define a dummy Terrain for example usage
+#     class DummyTerrain:
+#         def __init__(self):
+#             self.num_scenes_per_column = 2
+#             self.spacing_between_scenes = 5.0
+#             self.border = 2.0
+#             self.horizontal_scale = 1.0
+#             self.scene_y_offset = 0.0
+#             self.device = "cpu"
 
-        def is_valid_spawn_location(self, locations):
-            return torch.tensor(True)
+#         def is_valid_spawn_location(self, locations):
+#             return torch.tensor(True)
 
-        def mark_scene_location(self, x, y):
-            pass
+#         def mark_scene_location(self, x, y):
+#             pass
 
-    scene_lib = SceneLib(num_envs=4, device="cpu")
+#     scene_lib = SceneLib(num_envs=4, device="cpu")
 
-    # Create SceneObjects with options
-    obj1 = SceneObject(
-        object_path="cup.urdf",
-        translation=(1.0, 0.0, 0.0),
-        rotation=(0.0, 0.0, 0.0, 1.0),
-        motion=ObjectMotion(
-            frames=[
-                {"translation": (1.0, 0.0, 0.0), "rotation": (0.0, 0.0, 0.0, 1.0)},
-                {"translation": (1.5, 0.0, 0.0), "rotation": (0.0, 0.0, 0.0, 1.0)}
-            ],
-            fps=30.0
-        ),
-        options=ObjectOptions(
-            vhacd_enabled=True,
-            vhacd_params={
-                "resolution": 50000,
-                "max_convex_hulls": 128,
-                "max_num_vertices_per_ch": 64
-            },
-            fix_base_link=True
-        )
-    )
+#     # Create SceneObjects with options
+#     obj1 = SceneObject(
+#         object_path="cup.urdf",
+#         translation=(1.0, 0.0, 0.0),
+#         rotation=(0.0, 0.0, 0.0, 1.0),
+#         motion=ObjectMotion(
+#             frames=[
+#                 {"translation": (1.0, 0.0, 0.0), "rotation": (0.0, 0.0, 0.0, 1.0)},
+#                 {"translation": (1.5, 0.0, 0.0), "rotation": (0.0, 0.0, 0.0, 1.0)}
+#             ],
+#             fps=30.0
+#         ),
+#         options=ObjectOptions(
+#             vhacd_enabled=True,
+#             vhacd_params={
+#                 "resolution": 50000,
+#                 "max_convex_hulls": 128,
+#                 "max_num_vertices_per_ch": 64
+#             },
+#             fix_base_link=True
+#         )
+#     )
 
-    obj2 = SceneObject(
-        object_path="obstacle.urdf",
-        options=ObjectOptions(
-            vhacd_enabled=True,
-            vhacd_params={"resolution": 50000},
-            fix_base_link=True
-        )
-    )
-    scene1 = Scene(id=1, objects=[obj1, obj2])
+#     obj2 = SceneObject(
+#         object_path="obstacle.urdf",
+#         options=ObjectOptions(
+#             vhacd_enabled=True,
+#             vhacd_params={"resolution": 50000},
+#             fix_base_link=True
+#         )
+#     )
+#     scene1 = Scene(id=1, objects=[obj1, obj2])
 
-    obj3 = SceneObject(
-        object_path="chair.urdf",
-        translation=(2.0, 2.0, 0.0),
-        options=ObjectOptions(
-            vhacd_enabled=True,
-            vhacd_params={"resolution": 50000},
-            fix_base_link=True
-        )
-    )
-    obj4 = SceneObject(
-        object_path="table.urdf",
-        translation=(2.5, 2.0, 0.0),
-        options=ObjectOptions(
-            vhacd_enabled=True,
-            vhacd_params={"resolution": 50000},
-            fix_base_link=True
-        )
-    )
-    scene2 = Scene(id=2, objects=[obj3, obj4])
+#     obj3 = SceneObject(
+#         object_path="chair.urdf",
+#         translation=(2.0, 2.0, 0.0),
+#         options=ObjectOptions(
+#             vhacd_enabled=True,
+#             vhacd_params={"resolution": 50000},
+#             fix_base_link=True
+#         )
+#     )
+#     obj4 = SceneObject(
+#         object_path="table.urdf",
+#         translation=(2.5, 2.0, 0.0),
+#         options=ObjectOptions(
+#             vhacd_enabled=True,
+#             vhacd_params={"resolution": 50000},
+#             fix_base_link=True
+#         )
+#     )
+#     scene2 = Scene(id=2, objects=[obj3, obj4])
 
-    scenes = [scene1, scene2]
+#     scenes = [scene1, scene2]
 
-    terrain = DummyTerrain()
-    assigned_scenes = scene_lib.create_scenes(scenes, terrain, replicate_method="random")
-    for idx, scene in enumerate(assigned_scenes):
-        logger.info("Environment %d assigned Scene with objects %s with offset %s", idx, scene.objects, scene.offset)
+#     terrain = DummyTerrain()
+#     assigned_scenes = scene_lib.create_scenes(scenes, terrain, replicate_method="random")
+#     for idx, scene in enumerate(assigned_scenes):
+#         logger.info("Environment %d assigned Scene with objects %s with offset %s", idx, scene.objects, scene.offset)
 
-    # get_object_pose now returns an ObjectState and combine_object_motions is automatically called in create_scenes()
-    time = 1. / 30 * 0.5
-    pose_obj0 = scene_lib.get_object_pose(object_indices=torch.tensor([0]), time=torch.tensor([time]))
-    logger.info("Pose for object at index 0 at time %s:\nTranslations: %s\nRotations: %s", time, pose_obj0.translations, pose_obj0.rotations)
+#     # get_object_pose now returns an ObjectState and combine_object_motions is automatically called in create_scenes()
+#     time = 1. / 30 * 0.5
+#     pose_obj0 = scene_lib.get_object_pose(object_indices=torch.tensor([0]), time=torch.tensor([time]))
+#     logger.info("Pose for object at index 0 at time %s:\nTranslations: %s\nRotations: %s", time, pose_obj0.translations, pose_obj0.rotations)
