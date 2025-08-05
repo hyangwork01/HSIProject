@@ -1,0 +1,267 @@
+# @package _global_
+
+defaults:
+  - base
+scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Object/sofa
+scenes_name: Sofa
+scenes:
+  - scene_id: 3FO44W6BTT0F
+    scene_path: 3FO44W6BTT0F
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.41335898637771606]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W9V1B4C
+    scene_path: 3FO44W9V1B4C
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.3870429992675781]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6C5BSK
+    scene_path: 3FO44W6C5BSK
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.3892430067062378]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6BWAX6
+    scene_path: 3FO44W6BWAX6
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.3962770104408264]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6AXY07
+    scene_path: 3FO44W6AXY07
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.5592139959335327]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W69UD5N
+    scene_path: 3FO44W69UD5N
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.373881995677948]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W69UN6Q
+    scene_path: 3FO44W69UN6Q
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.5222139954566956]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6ACQOU
+    scene_path: 3FO44W6ACQOU
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.4618009924888611]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W696H8I
+    scene_path: 3FO44W696H8I
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.41578400135040283]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6C58GJ
+    scene_path: 3FO44W6C58GJ
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.44964799284935]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6C2X7U
+    scene_path: 3FO44W6C2X7U
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.3728159964084625]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W69U6GL
+    scene_path: 3FO44W69U6GL
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.6381310224533081]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6C2D5O
+    scene_path: 3FO44W6C2D5O
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.38795000314712524]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W698UT8
+    scene_path: 3FO44W698UT8
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.4503529965877533]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6BWOBA
+    scene_path: 3FO44W6BWOBA
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.4086399972438812]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6BYL6U
+    scene_path: 3FO44W6BYL6U
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.37169399857521057]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W69997C
+    scene_path: 3FO44W69997C
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.4073309898376465]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W696NWK
+    scene_path: 3FO44W696NWK
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.45323699712753296]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6C6GWW
+    scene_path: 3FO44W6C6GWW
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.5537629723548889]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]
+  - scene_id: 3FO44W6BWEA7
+    scene_path: 3FO44W6BWEA7
+    filter_list: []
+    rigidbody_list:
+      - 0
+    articulation_list: []
+    objects:
+      - obj_id: 0
+        obj_path: Instance_flatten.usda
+        obj_name: Instance_flatten
+        obj_translate: [0.0, 0.0, 0.37784698605537415]
+        obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
+        obj_scale: [1.0, 1.0, 1.0]

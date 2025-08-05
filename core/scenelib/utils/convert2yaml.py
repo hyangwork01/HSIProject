@@ -13,7 +13,7 @@ import argparse
 from pxr import Usd, UsdGeom, Gf, UsdUtils,Sdf
 from pxr import UsdPhysics,Vt
 import numpy as np
-from core.scenelib.utils.usd_utils import get_homeassets_list,euler_to_quat
+from core.scenelib.utils.usd_utils import get_homeassets_list,euler_to_quat,compute_usd_dims
 
 
 
@@ -216,9 +216,37 @@ def preprocess_single_scene(single_scene_usd_path,scene_cfg):
     #     json.dump(scene, f, ensure_ascii=False, indent=4)
     # print(f"导出完成：{json_path}")
     
+def preprocess_single_project(project_usd_path,scene_cfg):
 
+    obj_dir_path = os.path.dirname(project_usd_path)
+    usd_file = os.path.basename(project_usd_path)
+    # 创建一个新的usda导出flatten的文件
+    name = "Instance_flatten"
+    old_usd_path = os.path.join(obj_dir_path,usd_file)
+    new_usd_path = os.path.join(obj_dir_path,f"{name}.usda")
+    flatten_file(old_usd_path, name)           
 
+    cleanup_stage(src=new_usd_path)
 
+    min_pt, max_pt = compute_usd_dims(new_usd_path)
+    min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
+    max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]
+
+    obj_translate = (0.0, 0.0, -min_z)
+    obj_rotateXYZW = (0.0, 0.0, 0.0, 1.0)
+    obj_scale = (1.0, 1.0, 1.0)
+
+    obj = {
+        "obj_id": 0,
+        "obj_path": os.path.relpath(new_usd_path,obj_dir_path),
+        "obj_name": name.capitalize(),
+        "obj_translate": to_flow(obj_translate),
+        "obj_rotateXYZW": to_flow(obj_rotateXYZW),
+        "obj_scale": to_flow(obj_scale),
+    }
+    scene_cfg["objects"].append(obj)
+    # 先假设处理的物体全是RigidBody
+    scene_cfg["rigidbody_list"].append(obj["obj_id"])
 
 
 def export_scene_yaml(usd_path,output_dir):
@@ -262,7 +290,7 @@ def export_scene_yaml(usd_path,output_dir):
 
                 # 确保输出目录存在
                 os.makedirs(output_dir, exist_ok=True)
-                yaml_path = os.path.join(output_dir, f"{name.lower()}.yaml")
+                yaml_path = os.path.join(output_dir, f"scene_{name.lower()}.yaml")
                 yaml = YAML()
                 yaml.indent(mapping=2, sequence=4, offset=2)
 
@@ -275,8 +303,43 @@ def export_scene_yaml(usd_path,output_dir):
 
 
     elif os.path.basename(usd_path) == "Object":
-        print("TODO:coming soon ...")
-        raise ValueError("Object preprocess will coming soon ...")      
+        for name in os.listdir(usd_path): 
+            dir_path = os.path.join(usd_path, name)
+            if os.path.isdir(dir_path):
+                conf_dict = {}
+                conf_dict["defaults"] = ["base"]
+                conf_dict["scenes_abspath"] = os.path.abspath(dir_path)
+                conf_dict["scenes_name"] = name.capitalize()
+                conf_dict["scenes"] = []
+                for usd_dir in os.listdir(dir_path):
+                    if os.path.isdir(os.path.join(dir_path,usd_dir)):
+                        obj_dir_path = os.path.join(dir_path,usd_dir)
+                        for usd_file in os.listdir(obj_dir_path):
+                            if os.path.basename(usd_file) == "Instance.usda":
+                                scene_cfg = {}
+                                scene_cfg["scene_id"] = usd_dir
+                                scene_cfg["scene_path"] = os.path.relpath(obj_dir_path,dir_path)
+                                scene_cfg["filter_list"] = []
+                                scene_cfg["rigidbody_list"] = []
+                                scene_cfg["articulation_list"] = []
+                                scene_cfg["objects"] = []
+
+                                preprocess_single_project(os.path.join(obj_dir_path,usd_file),scene_cfg)
+
+                                conf_dict["scenes"].append(scene_cfg)
+                                
+                # 确保输出目录存在
+                os.makedirs(output_dir, exist_ok=True)
+                yaml_path = os.path.join(output_dir, f"object_{name.lower()}.yaml")
+                yaml = YAML()
+                yaml.indent(mapping=2, sequence=4, offset=2)
+
+                # 3. 写文件——先写 Hydra 的 package 注释，然后 dump
+                with open(yaml_path, "w", encoding="utf-8") as f:
+                    f.write("# @package _global_\n\n")  # Hydra 全局包指令 :contentReference[oaicite:2]{index=2}
+                    yaml.dump(conf_dict, f)
+                print(f"已导出 {yaml_path}")                    
+
     else:
         raise ValueError("暂不支持输入非Home目录和Object目录")
                                          

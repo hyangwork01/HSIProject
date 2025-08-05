@@ -13,3 +13,5 @@ motion_lib: ???  # This is defined in the robot configs
 motion_file: null
 
 terrain: ???  # This is defined in the terrain configs
+
+scene: null
