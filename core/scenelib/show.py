@@ -19,7 +19,7 @@ from core.simulator.base_simulator.config import (
 from core.envs.base_env.env_utils.terrains.flat_terrain import FlatTerrain
 from core.envs.base_env.env_utils.terrains.terrain_config import TerrainConfig
 from core.scenelib.scenelib import SceneLib
-
+import math
 # Create robot asset configuration
 robot_asset_config = RobotAssetConfig(
     robot_type="h1",
@@ -161,10 +161,59 @@ try:
             4. Q - close the simulator.
         """
 
-        for i in range(0, 2*simulator_config.sim.fps):
+        for i in range(0, simulator_config.sim.fps):
             actions = torch.randn(simulator_config.num_envs, simulator_config.robot.number_of_actions, device=device)
             simulator.step(actions)
         simulator.reset_envs(default_state, env_ids=torch.arange(simulator_config.num_envs, device=device))
+        simulator._initial_scene_pos
+        env_ids=torch.arange(simulator_config.num_envs, device=device)
+        initial_scene_pos = simulator._initial_scene_pos
+        E, O, _ = initial_scene_pos.shape            
+        sample_len = simulator.terrain.env_length/2
+        sample_width = simulator.terrain.env_width/2
+        uv = torch.rand(E, O, 2, device=device) * 2.0 - 1.0  # 形状 [E, O, 2]
+        # 广播乘以各自范围
+        scale = torch.tensor([sample_len, sample_width], device=device).view(1, 1, 2)
+        xy = uv * scale  # 形状 [E, O, 2]
+        initial_scene_pos[..., 0:2] = xy
+
+        scene_position = torch.stack(simulator.get_scene_positions()).unsqueeze(1)
+        initial_scene_pos[..., :3] += scene_position[env_ids,:,:3]
+
+
+        # 假设 initial[...,3:7] 存的是原四元数 [w, x, y, z]
+        orig_q = initial_scene_pos[..., 3:7]   # [E, O, 4]
+        # 1. 生成绕 Z 轴的随机四元数 q_s
+        theta = torch.rand(E, O, device=device) * 2 * math.pi
+        qs = torch.stack([
+            torch.cos(theta * 0.5),
+            torch.zeros_like(theta),
+            torch.zeros_like(theta),
+            torch.sin(theta * 0.5),
+        ], dim=-1)  # [E, O, 4]
+
+        # 2. 定义批量四元数乘法（Hamilton积），这里用左乘 qs * orig_q
+        def quat_mul(q, r):
+            # q, r 都是 [..., 4]，按 (w, x, y, z)
+            w1, x1, y1, z1 = q.unbind(-1)
+            w2, x2, y2, z2 = r.unbind(-1)
+            return torch.stack([
+                w1*w2 - x1*x2 - y1*y2 - z1*z2,
+                w1*x2 + x1*w2 + y1*z2 - z1*y2,
+                w1*y2 - x1*z2 + y1*w2 + z1*x2,
+                w1*z2 + x1*y2 - y1*x2 + z1*w2,
+            ], dim=-1)
+
+        # 3. 计算新四元数
+        new_q = quat_mul(qs, orig_q)  # [E, O, 4]
+
+        # 4. 写回 initial_scene_pos
+        initial_scene_pos[..., 3:7] = new_q
+
+        simulator.reset_objects(initial_scene_pos,env_ids=torch.arange(simulator_config.num_envs, device=device))
+
+
+
 except KeyboardInterrupt:
     print("\nSimulation stopped by user")
 finally:

@@ -13,8 +13,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.5618680119514465]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -26,8 +26,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.505977988243103]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -39,8 +39,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.5398110151290894]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -52,8 +52,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.5826169848442078]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -65,8 +65,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.6555259823799133]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -78,8 +78,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.7169830203056335]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -91,8 +91,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.4945470094680786]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -104,8 +104,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.8504530191421509]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -117,8 +117,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.6503599882125854]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -130,8 +130,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.553695023059845]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -143,8 +143,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.584863007068634]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -156,8 +156,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.647765040397644]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -169,8 +169,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.544730007648468]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -182,8 +182,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.8198850154876709]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -195,8 +195,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.6641409993171692]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -208,8 +208,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.5750409960746765]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -221,8 +221,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.6961609721183777]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -234,8 +234,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.7796090245246887]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -247,8 +247,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.6475499868392944]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
@@ -260,8 +260,8 @@ scenes:
     articulation_list: []
     objects:
       - obj_id: 0
-        obj_path: Instance_flatten.usda
-        obj_name: Instance_flatten
+        obj_path: Instance.usda
+        obj_name: Instance.usda
         obj_translate: [0.0, 0.0, 0.7578660249710083]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]

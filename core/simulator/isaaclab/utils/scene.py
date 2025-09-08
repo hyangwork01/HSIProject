@@ -178,6 +178,7 @@ class SceneCfg(InteractiveSceneCfg):
             mdl_path="{NVIDIA_NUCLEUS_DIR}/Materials/Base/Architecture/Shingles_01.mdl",
             project_uvw=True,
         )
+        # TODO:将这个要改为依据terrain_type来判断是Flatten还是Trimesh
         if isinstance(terrain, FlatTerrain):
             # When using a flat terrain, we spawn the built-in plane.
             # This is faster and more memory efficient than spawning a trimesh terrain.

@@ -96,20 +96,61 @@ class IsaacLabSimulator(Simulator):
     def reset_envs(self, new_states, env_ids):
  
         super().reset_envs(new_states, env_ids)
-        # Update initial object positions
-        if self.scene_lib is not None and self.scene_lib.total_spawned_scenes > 0:
-            objects_start_pos = torch.zeros(
-                (len(env_ids), 13), device=self.device, dtype=torch.float
+    
+
+    # def reset_objects(self,new_states = None, env_ids = None):
+    #     if env_ids is None:
+    #         # Update initial object positions
+    #         if self.scene_lib is not None and self.scene_lib.total_spawned_scenes > 0:
+    #             objects_start_pos = torch.zeros(
+    #                 (self.num_envs, 13), device=self.device, dtype=torch.float
+    #             )
+    #             for obj_idx, object in enumerate(self._object):
+    #                 objects_start_pos[:, :7] = self._initial_scene_pos[:, obj_idx, :]
+    #                 object.write_root_state_to_sim(objects_start_pos)
+    #     # Update initial object positions
+    #     if self.scene_lib is not None and self.scene_lib.total_spawned_scenes > 0:
+    #         objects_start_pos = torch.zeros(
+    #             (len(env_ids), 13), device=self.device, dtype=torch.float
+    #         )
+    #         for obj_idx, object in enumerate(self._object):
+    #             objects_start_pos[:, :7] = self._initial_scene_pos[env_ids, obj_idx, :]
+    #             object.write_root_state_to_sim(objects_start_pos, env_ids)
+
+    def reset_objects(self, new_states=None, env_ids=None):
+        # 1. 如果没有传入 env_ids，就默认对所有 env 进行操作
+        if env_ids is None:
+            env_ids = torch.arange(self.num_envs, device=self.device, dtype=torch.long)
+        else:
+            # 保证 env_ids 是 long 类型的索引张量
+            env_ids = torch.as_tensor(env_ids, device=self.device, dtype=torch.long)
+
+        # 2. 如果没有传入 new_states，就使用 _initial_scene_pos 中保存的初始位置
+        if new_states is None:
+            # _initial_scene_pos: [num_envs, num_objects, state_dim]
+            new_states = self._initial_scene_pos[env_ids,:,:]
+
+
+        # 2.5 长度检查：new_states 和 env_ids 的 batch 大小必须一致
+        if new_states.shape[0] != env_ids.shape[0]:
+            raise ValueError(
+                f"Batch size mismatch: new_states has {new_states.shape[0]} entries, "
+                f"but env_ids has {env_ids.shape[0]} entries"
             )
-            for obj_idx, object in enumerate(self._object):
-                objects_start_pos[:, :7] = self._initial_scene_pos[env_ids, obj_idx, :]
-                object.write_root_state_to_sim(objects_start_pos, env_ids)
 
+        # 3. 准备写入模拟器的状态张量
+        #    假设 write_root_state_to_sim 需要形状 (B, 13) 的输入，
+        #    其中前 7 个元素是位置/旋转数据，剩余可以保留为 0。
+        B = env_ids.shape[0]
+        objects_start_pos = torch.zeros((B, 13), device=self.device, dtype=torch.float)
 
-            # self._scene.reset(env_ids)
-            # self._scene.write_data_to_sim()
-            # self._sim.reset()
-        
+        # 4. 按照每个 object 依次写入对应 env 的 new_states
+        for obj_idx, obj in enumerate(self._object):
+            # new_states[:, obj_idx, :] 的形状是 (B, 7)
+            objects_start_pos[:, :7] = new_states[:, obj_idx, :]
+            # 把这些状态写入 simulator（假设第二个参数接受 env_ids）
+            obj.write_root_state_to_sim(objects_start_pos, env_ids)
+
     def _get_scene_cfg(self) -> SceneCfg:
         """
         Construct and return the scene configuration from the current config, scene library, and terrain.

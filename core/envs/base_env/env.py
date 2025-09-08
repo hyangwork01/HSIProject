@@ -21,7 +21,6 @@ from core.envs.base_env.components.motion_manager import MotionManager
 
 from core.utils.motion_lib import MotionLib
 # from core.utils.scene_lib import SceneLib
-from core.scenelib.scenelib import SceneLib
 
 class BaseEnv:
     """
@@ -538,13 +537,6 @@ class BaseEnv:
             device=self.device,
         )
 
-        self.scene_lib: SceneLib = None
-        scene_cfg = getattr(self.config, "scene", None)
-
-        if scene_cfg is None or scene_cfg.get("scenes") is None:
-            return
-        self.scene_lib = SceneLib(scene_cfg,num_envs=self.num_envs, device=self.device)
-        self.scene_lib.create_scenes(self.terrain)
 
 
     """

@@ -239,9 +239,9 @@ class SceneLib:
                         object = SceneObject(
                             object_path=obj_abspath,
                             options=object_options,
-                            translation=obj_translate,    
-                            rotation=obj_rotateXYZW,
-                            scale=obj_scale,
+                            translation=tuple(obj_translate),    
+                            rotation=tuple(obj_rotateXYZW),
+                            scale=tuple(obj_scale),
                             object_type= "rigid",
                             id=idx,
                             object_dims = (min_x, max_x, min_y, max_y, min_z, max_z), # 除过scale后的尺寸
@@ -263,9 +263,9 @@ class SceneLib:
                         object = SceneObject(
                             object_path=obj_abspath,
                             options=object_options,
-                            translation=obj_translate,    
-                            rotation=obj_rotateXYZW,
-                            scale=obj_scale,
+                            translation=tuple(obj_translate),    
+                            rotation=tuple(obj_rotateXYZW),
+                            scale=tuple(obj_scale),
                             object_type= "articulation",
                             id=idx,
                             object_dims = (min_x, max_x, min_y, max_y, min_z, max_z),

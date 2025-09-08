@@ -221,14 +221,11 @@ def preprocess_single_project(project_usd_path,scene_cfg):
     obj_dir_path = os.path.dirname(project_usd_path)
     usd_file = os.path.basename(project_usd_path)
     # 创建一个新的usda导出flatten的文件
-    name = "Instance_flatten"
-    old_usd_path = os.path.join(obj_dir_path,usd_file)
-    new_usd_path = os.path.join(obj_dir_path,f"{name}.usda")
-    flatten_file(old_usd_path, name)           
+    name = usd_file
+    usd_path = os.path.join(obj_dir_path,usd_file)
 
-    cleanup_stage(src=new_usd_path)
 
-    min_pt, max_pt = compute_usd_dims(new_usd_path)
+    min_pt, max_pt = compute_usd_dims(usd_path)
     min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
     max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]
 
@@ -238,7 +235,7 @@ def preprocess_single_project(project_usd_path,scene_cfg):
 
     obj = {
         "obj_id": 0,
-        "obj_path": os.path.relpath(new_usd_path,obj_dir_path),
+        "obj_path": os.path.relpath(usd_path,obj_dir_path),
         "obj_name": name.capitalize(),
         "obj_translate": to_flow(obj_translate),
         "obj_rotateXYZW": to_flow(obj_rotateXYZW),
@@ -353,7 +350,7 @@ def export_scene_yaml(usd_path,output_dir):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="将 USD 场景物体相对变换导出为指定格式 YAML")
-    parser.add_argument("usd_dir",   help="输入一类的 USD 目录路径",nargs="?",default="/home/luohy/MyRepository/MyDataSets/Data/Home")
+    parser.add_argument("usd_dir",   help="输入一类的 USD 目录路径",nargs="?",default="/home/luohy/MyRepository/MyDataSets/Data/Object")
 
     args = parser.parse_args()
 

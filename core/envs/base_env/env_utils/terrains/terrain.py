@@ -101,10 +101,10 @@ class Terrain:
             self.height_field_raw = params["height_field_raw"]
             self.walkable_field_raw = params["walkable_field_raw"]
         else:
-            self.generate_subterrains()
+            self._generate_subterrains()
 
         self.height_samples = torch.tensor(self.height_field_raw, device=self.device, dtype=torch.float) * self.vertical_scale
-        self.num_height_points, self.height_points = self.init_height_points(num_envs)
+        self.num_height_points, self.height_points = self._init_height_points(num_envs)
 
         self.vertices, self.triangles = convert_heightfield_to_trimesh(
             self.height_field_raw,
@@ -114,8 +114,8 @@ class Terrain:
             flat_tolerance=0.0001,
             max_triangle_size=50
         )
-        self.compute_walkable_coords()
-        self.compute_flat_coords()
+        self._compute_walkable_coords()
+        self._compute_flat_coords()
 
         if self.config.save_terrain:
             print("Saving this generated terrain")
@@ -137,7 +137,7 @@ class Terrain:
         # # Generate and show the plot
         # self.generate_terrain_plot()
 
-    def generate_subterrains(self):
+    def _generate_subterrains(self):
         if self.config.terrain_composition == "curriculum":
             self.curriculum(
                 n_subterrains_per_level=self.env_cols, n_levels=self.env_rows
@@ -149,7 +149,7 @@ class Terrain:
                 + " not implemented"
             )
 
-    def compute_walkable_coords(self):
+    def _compute_walkable_coords(self):
         self.walkable_field_raw[: self.border, :] = 1
         self.walkable_field_raw[:, -(self.border + self.object_playground_cols + self.object_playground_buffer_size) :] = 1
         self.walkable_field_raw[:, : self.border] = 1
@@ -161,7 +161,7 @@ class Terrain:
         self.walkable_x_coords = walkable_x_indices * self.horizontal_scale
         self.walkable_y_coords = walkable_y_indices * self.horizontal_scale
 
-    def compute_flat_coords(self):
+    def _compute_flat_coords(self):
         self.flat_field_raw[: self.border, :] = 1
         self.flat_field_raw[
             :,
@@ -208,7 +208,7 @@ class Terrain:
 
         return flat_locs
 
-    def curriculum(self, n_subterrains_per_level, n_levels):
+    def _curriculum(self, n_subterrains_per_level, n_levels):
         for subterrain_idx in range(n_subterrains_per_level):
             for level_idx in range(n_levels):
                 subterrain = SubTerrain(self.config, "terrain", device=self.device)
@@ -350,7 +350,7 @@ class Terrain:
 
         return valid
 
-    def init_height_points(self, num_envs):
+    def _init_height_points(self, num_envs):
         """
         Pre-defines the grid for the height-map observation.
         """
