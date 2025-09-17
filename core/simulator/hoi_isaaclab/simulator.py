@@ -8,13 +8,13 @@ from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR
 
 from easydict import EasyDict
 from core.envs.base_env.env_utils.terrains.terrain import Terrain
-from core.utils.scene_lib import SceneLib
+from core.scenelib.scenelib import SceneLib
 import os
 from pathlib import Path
 import xml.etree.ElementTree as ET
 import numpy as np
 from typing import Dict, List, Any, Optional, Tuple
-from core.simulator.isaaclab.utils.scene import SceneCfg
+from core.simulator.hoi_isaaclab.utils.scene import SceneCfg
 from core.simulator.base_simulator.simulator import Simulator
 from core.simulator.base_simulator.config import (
     MarkerState,
@@ -93,6 +93,44 @@ class IsaacLabSimulator(Simulator):
             self._build_markers(visualization_markers)
         self._sim.reset()
 
+    def reset_envs(self, new_states, env_ids):
+ 
+        super().reset_envs(new_states, env_ids)
+    
+    def reset_objects(self, new_states=None, env_ids=None):
+        # 1. 如果没有传入 env_ids，就默认对所有 env 进行操作
+        if env_ids is None:
+            env_ids = torch.arange(self.num_envs, device=self.device, dtype=torch.long)
+        else:
+            # 保证 env_ids 是 long 类型的索引张量
+            env_ids = torch.as_tensor(env_ids, device=self.device, dtype=torch.long)
+
+        # 2. 如果没有传入 new_states，就使用 _initial_scene_pos 中保存的初始位置
+        if new_states is None:
+            # _initial_scene_pos: [num_envs, num_objects, state_dim]
+            new_states = self._initial_scene_pos[env_ids,:,:]
+
+
+        # 2.5 长度检查：new_states 和 env_ids 的 batch 大小必须一致
+        if new_states.shape[0] != env_ids.shape[0]:
+            raise ValueError(
+                f"Batch size mismatch: new_states has {new_states.shape[0]} entries, "
+                f"but env_ids has {env_ids.shape[0]} entries"
+            )
+
+        # 3. 准备写入模拟器的状态张量
+        #    假设 write_root_state_to_sim 需要形状 (B, 13) 的输入，
+        #    其中前 7 个元素是位置/旋转数据，剩余可以保留为 0。
+        B = env_ids.shape[0]
+        objects_start_pos = torch.zeros((B, 13), device=self.device, dtype=torch.float)
+
+        # 4. 按照每个 object 依次写入对应 env 的 new_states
+        for obj_idx, obj in enumerate(self._object):
+            # new_states[:, obj_idx, :] 的形状是 (B, 7)
+            objects_start_pos[:, :7] = new_states[:, obj_idx, :]
+            # 把这些状态写入 simulator（假设第二个参数接受 env_ids）
+            obj.write_root_state_to_sim(objects_start_pos, env_ids)
+
     def _get_scene_cfg(self) -> SceneCfg:
         """
         Construct and return the scene configuration from the current config, scene library, and terrain.
@@ -102,19 +140,29 @@ class IsaacLabSimulator(Simulator):
         """
         scene_cfgs = None
         if self.scene_lib is not None and self.scene_lib.total_spawned_scenes > 0:
-            scene_cfgs, self._initial_scene_pos = self._preprocess_object_playground()
+            scene_cfgs, self._initial_scene_pos,self._object_types = self._preprocess_object_playground()
 
-        scene_cfg = SceneCfg(
-            config=self.config,
-            robot_config=self.robot_config,
-            num_envs=self.config.num_envs,
-            env_spacing=2.0,
-            scene_cfgs=scene_cfgs,
-            terrain=self.terrain,
-        )
+            scene_cfg = SceneCfg(
+                config=self.config,
+                robot_config=self.robot_config,
+                num_envs=self.config.num_envs,
+                env_spacing=2.0,
+                scene_cfgs=scene_cfgs,
+                terrain=self.terrain,
+                objects_type = self._object_types,
+            )
+        else:
+            scene_cfg = SceneCfg(
+                config=self.config,
+                robot_config=self.robot_config,
+                num_envs=self.config.num_envs,
+                env_spacing=2.0,
+                scene_cfgs=scene_cfgs,
+                terrain=self.terrain,
+            )            
         return scene_cfg
 
-    def _preprocess_object_playground(self) -> Tuple[List[Any], torch.Tensor]:
+    def _preprocess_object_playground(self) -> Tuple[List[Any], torch.Tensor, List[Any]]:
         """
         Process and build the object playground from the scene library.
 
@@ -126,13 +174,20 @@ class IsaacLabSimulator(Simulator):
         objects_cfgs = []
         for _ in range(self.scene_lib.num_objects_per_scene):
             objects_cfgs.append([])
+
+        objects_type = []
+        for _ in range(self.scene_lib.num_objects_per_scene):
+            objects_type.append([])
+
         initial_obj_pos = torch.zeros(
             (self.num_envs, self.scene_lib.num_objects_per_scene, 7),
             device=self.device,
             dtype=torch.float,
         )
 
-        for scene_idx, scene_spawn_info in enumerate(self.scene_lib.scenes):
+        
+
+        for scene_idx, scene in enumerate(self.scene_lib.scenes):
             scene_offset = self.scene_lib.scene_offsets[scene_idx]
 
             height_at_scene_origin = self.terrain.get_ground_heights(
@@ -151,24 +206,22 @@ class IsaacLabSimulator(Simulator):
             )
             self._object_dims.append([])
 
-            for obj_idx, obj in enumerate(scene_spawn_info.objects):
+            for obj_idx, obj in enumerate(scene.objects):
+                # TODO:根据ID去对应不同的Object
                 # Get the spawn info for this object which contains the correct ID
-                object_spawn_info = next(
-                    info
-                    for info in self.scene_lib.object_spawn_list
-                    if info.object_path == obj.object_path
-                    and (info.is_first_instance or info.first_instance_id == info.id)
-                )
 
-                file_extension = object_spawn_info.object_path.split("/")[-1].split(
+                file_extension = obj.object_path.split("/")[-1].split(
                     "."
                 )[-1]
 
                 assert file_extension in [
                     "usd",
                     "usda",
-                    "urdf",
-                ], f"Object asset [{obj.object_path}] must be a USD/URDF file"
+                ], f"Home asset [{obj.object_path}] must be a USD file"
+                
+
+                objects_type[obj_idx].append(obj.object_type)
+
 
                 # Calculate the global position of the object
                 global_object_position = torch.tensor(
@@ -188,6 +241,8 @@ class IsaacLabSimulator(Simulator):
                         obj.rotation[0],
                         obj.rotation[1],
                         obj.rotation[2],
+
+
                     ],
                     device=self.device,
                     dtype=torch.float,
@@ -200,63 +255,102 @@ class IsaacLabSimulator(Simulator):
                     os.path.join(main_dir_path, obj.object_path)
                 ).resolve()
 
-                # Common properties based on object options
-                rigid_props = sim_utils.RigidBodyPropertiesCfg(
-                    kinematic_enabled=obj.options.fix_base_link
-                )
-                collision_props = sim_utils.CollisionPropertiesCfg(
-                    contact_offset=0.002,
-                    rest_offset=0.0,
-                )
-
-                if file_extension == "urdf":
-                    # Parse the URDF file
-                    tree = ET.parse(asset_path)
-                    root = tree.getroot()
-
-                    # Get the box dimensions from the collision geometry
-                    link = root.find("link")
-                    collision = link.find("collision")
-                    geometry = collision.find("geometry")
-                    box = geometry.find("box")
-                    size = box.get("size").split(" ")
-
-                    spawn_cfg = sim_utils.CuboidCfg(
-                        size=(
-                            float(size[0]),
-                            float(size[1]),
-                            float(size[2]),
-                        ),
-                        visual_material=sim_utils.PreviewSurfaceCfg(
-                            diffuse_color=(1.0, 0.6, 0.2), metallic=0.2
-                        ),
-                        rigid_props=rigid_props,
-                        mass_props=sim_utils.MassPropertiesCfg(
-                            mass=1.0, density=obj.options.density
-                        ),
-                        collision_props=collision_props,
+                if obj.object_type == "articulation":
+                    rigid_props = sim_utils.RigidBodyPropertiesCfg(
+                        rigid_body_enabled=obj.options.rigid_body_enabled,
+                        kinematic_enabled=obj.options.kinematic_enabled,
+                        angular_damping=obj.options.angular_damping,
+                        linear_damping=obj.options.linear_damping,
+                        max_linear_velocity=obj.options.max_linear_velocity,
+                        max_angular_velocity=obj.options.max_angular_velocity,
+                        retain_accelerations=obj.options.retain_accelerations,
                     )
+                    articulation_props = sim_utils.ArticulationRootPropertiesCfg(
+                        articulation_enabled = obj.options.articulation_enabled,
+                        enabled_self_collisions = obj.options.enabled_self_collisions,
+                        fix_root_link = obj.options.fix_root_link,
+                    )
+                    mass_props = sim_utils.MassPropertiesCfg(
+                        density=obj.options.density,
+                    )
+                    if obj.options.visual_material is False:
+                        spawn_cfg = sim_utils.UsdFileCfg(
+                            usd_path=str(asset_path),
+                            scale=obj.scale,
+                            rigid_props=rigid_props,
+                            articulation_props=articulation_props,
+                            mass_props=mass_props,
+                            visual_material=sim_utils.PreviewSurfaceCfg(
+                                diffuse_color=(0.2, 0.7, 0.3), metallic=0.2
+                            ),
+                        )
+                    else:
+                        spawn_cfg = sim_utils.UsdFileCfg(
+                            usd_path=str(asset_path),
+                            scale=obj.scale,
+                            rigid_props=rigid_props,
+                            articulation_props=articulation_props,
+                            mass_props=mass_props,
+                        )
+                elif obj.object_type == "rigid":
+                    rigid_props = sim_utils.RigidBodyPropertiesCfg(
+                        rigid_body_enabled=obj.options.rigid_body_enabled,
+                        kinematic_enabled=obj.options.kinematic_enabled,
+                        angular_damping=obj.options.angular_damping,
+                        linear_damping=obj.options.linear_damping,
+                        max_linear_velocity=obj.options.max_linear_velocity,
+                        max_angular_velocity=obj.options.max_angular_velocity,
+                        retain_accelerations=obj.options.retain_accelerations,
+                    )
+                    collision_props = sim_utils.CollisionPropertiesCfg(
+                        collision_enabled = obj.options.collision_enabled,
+                        contact_offset=0.002,
+                        rest_offset=0.0,
+                    )
+
+                    mass_props = sim_utils.MassPropertiesCfg(
+                        density=obj.options.density,
+                    )
+                    if obj.options.visual_material is False:
+                        spawn_cfg = sim_utils.UsdFileCfg(
+                            usd_path=str(asset_path),
+                            scale=obj.scale,
+                            rigid_props=rigid_props,
+                            collision_props=collision_props,
+                            mass_props=mass_props,
+                            visual_material=sim_utils.PreviewSurfaceCfg(
+                                diffuse_color=(0.2, 0.7, 0.3), metallic=0.2
+                            ),
+                        )
+                    else:
+                        spawn_cfg = sim_utils.UsdFileCfg(
+                            usd_path=str(asset_path),
+                            scale=obj.scale,
+                            rigid_props=rigid_props,
+                            collision_props=collision_props,
+                            mass_props=mass_props,
+                        )   
                 else:
-                    spawn_cfg = sim_utils.UsdFileCfg(
-                        activate_contact_sensors=True,
-                        usd_path=str(asset_path),
-                        rigid_props=rigid_props,
-                        collision_props=collision_props,
-                        visual_material=sim_utils.PreviewSurfaceCfg(
-                            diffuse_color=(0.2, 0.7, 0.3), metallic=0.2
-                        ),
-                    )
+                    raise ValueError(f"Invalid object type: {obj.object_type}")
+                
                 objects_cfgs[obj_idx].append(spawn_cfg)
-
                 object_dims = torch.tensor(
-                    object_spawn_info.object_dims, device=self.device, dtype=torch.float
+                obj.object_dims, device=self.device, dtype=torch.float
                 )
                 self._object_dims[-1].append(object_dims)
+
             self._object_dims[-1] = torch.stack(self._object_dims[-1]).reshape(
                 self._num_objects_per_scene, -1
             )
+        for idx in range(self.scene_lib.num_objects_per_scene):
+            if len(set(objects_type[idx])) != 1:
+                raise ValueError(
+                    f"Object {idx} has more than one object type. This is not supported."
+                )
+            objects_type[idx] = objects_type[idx][0]
 
-        return objects_cfgs, initial_obj_pos
+        
+        return objects_cfgs, initial_obj_pos ,objects_type
 
     def _setup_keyboard(self) -> None:
         """
@@ -633,7 +727,7 @@ class IsaacLabSimulator(Simulator):
         """
         if not self.headless:
             if not hasattr(self, "_perspective_view"):
-                from core.simulator.isaaclab.utils.perspective_viewer import (
+                from core.simulator.myisaaclab.utils.perspective_viewer import (
                     PerspectiveViewer,
                 )
 

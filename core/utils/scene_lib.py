@@ -2,13 +2,11 @@ import logging
 import random
 import copy
 from dataclasses import dataclass, field, MISSING
-from typing import List, Optional, Tuple, Dict,Type
+from typing import List, Optional, Tuple, Dict
 from isaac_utils import torch_utils
 import torch
 import trimesh
 import os
-from pathlib import Path
-from pxr import Usd, UsdGeom, Gf
 
 from core.envs.base_env.env_utils.object_utils import (
     as_mesh,
@@ -112,9 +110,8 @@ class SpawnInfo:
     object_dims: Tuple[float, float, float, float, float, float] = None
     is_first_instance: bool = True
     first_instance_id: int = None
-    scale: float = 1.0
 
-# TODO:我们需要将ID给一类的物体绑定上，这样后续加载物体时，可以按类加载。
+
 class SceneLib:
     """
     A simplified scene library.
@@ -150,135 +147,7 @@ class SceneLib:
         self.motion_starts = None   # Starting index in the unified tensor for each object
         self.motion_dts = None      # Delta time for each object's motion
         self.motion_num_frames = None  # Number of frames in each object's motion
-        self.task = None
 
-    def _gettask(self, name: str) -> Type:
-        """
-        获取任务类
-        """
-        task = None
-        name = name.lower()
-        if name == "sitchair":
-            from core.utils.task.SitChair import TaskScene as task
-        # TODO
-
-        if task is None:
-            raise ValueError(f"Task '{name}' not found.")
-        return task
-    def print_expected_path():
-        expected = """
-        objects_path/
-        └── Object/
-            ├── chair/
-            │   ├── 001/
-            │   └── 002/
-            └── table/
-                └── 001/
-                    └── instance.usd
-                    └── rigidbody.usd
-                    └── collision.usd                    
-        """
-        header = "======= Expected Structure ========="
-        
-        print("The Objects path should be structured as follows:\n")
-        print(header)
-        print(expected)
-        print("="* len(header))
-    def get_objects_path(self,objects_path: str):
-        """
-        使用请按照usd_paths["rigid"]["chair"]来获取,使用前请排序
-        """
-        
-        root = Path(objects_path)
-        usd_paths: dict[str, dict[str, list[str]]] = {}
-        if not root.is_dir():
-            raise ValueError(f"Objects path '{objects_path}' 不存在或不是目录。")
-        for usd_file in root.rglob("*.usd"):
-            parts     = usd_file.parts
-            type_name = parts[-3]
-            attribute = usd_file.stem
-            abs_path  = str(usd_file.resolve())
-            usd_paths.setdefault(attribute, {}) \
-                     .setdefault(type_name, []) \
-                     .append(abs_path)
-        return usd_paths
-    
-    def create_task_scenes(self,task:str,terrain: Terrain,objects_path: str = "/home/luohy/MyRepository/MyDataSets",assign_method: str = "sequential", replicate_method: str = "random") -> List[Scene]:
-        if objects_path == "":
-            # 打印所希望的usd数据集结构
-            self.print_expected_path()
-            raise ValueError("Objects path must be provided.")
-
-        # 获取objects_path中所有的路径
-        usd_paths = self.get_objects_path(objects_path)
-
-        task = self._gettask(task)
-        taskscene = task(usd_paths)
-        assigned_scenes = taskscene.create_scenes(terrain,self.num_envs,assign_method, replicate_method)
-        # Use Terrain configurations to compute scene offsets and validate spawn locations
-        # Compute offsets using terrain properties
-        for idx, scene in enumerate(assigned_scenes):
-            x_offset = ((idx % terrain.num_scenes_per_column + 1) * terrain.spacing_between_scenes + terrain.border * terrain.horizontal_scale)
-            y_offset = ((idx // terrain.num_scenes_per_column + 1) * terrain.spacing_between_scenes + terrain.scene_y_offset)
-            scene.offset = (x_offset, y_offset)
-            
-            # Compute integer grid location
-            scene_x = int(x_offset / terrain.horizontal_scale)
-            scene_y = int(y_offset / terrain.horizontal_scale)
-            locations = torch.tensor([[scene_x, scene_y]], device=terrain.device)
-            assert terrain.is_valid_spawn_location(locations).cpu().item(), f"Scene {idx} is not a valid spawn location."
-            terrain.mark_scene_location(scene_x, scene_y)
-            logger.info("Assigned scene id %s to offset (%.2f, %.2f)", idx, x_offset, y_offset)
-            self._scene_offsets.append((x_offset, y_offset))
-
-        # Ensure each scene has the same number of objects
-        object_counts = [len(scene.objects) for scene in assigned_scenes]
-        if len(set(object_counts)) != 1:
-            logger.error("All scenes must have the same number of objects. Found counts: %s", object_counts)
-            raise ValueError("Scenes have inconsistent number of objects: " + str(object_counts))
-        self.num_objects_per_scene = object_counts[0]
-
-        # Create object spawn list from the first scene (canonical objects)
-        for idx, obj in enumerate(assigned_scenes[0].objects):
-            min_x, max_x, min_y, max_y, min_z, max_z = self.compute_usd_dims(obj.object_path)
-            object_dim=(min_x, max_x, min_y, max_y, min_z, max_z)
-            spawn_info = SpawnInfo(
-                id=idx,  # First instance gets its index as ID
-                object_path=obj.object_path,
-                object_options=obj.options,
-                object_dims=tuple(dim / 100 for dim in object_dim),
-                is_first_instance=True,
-                first_instance_id=idx,
-                scale=0.01
-            )
-            self._object_spawn_list.append(spawn_info)
-            self._object_path_to_id[obj.object_path] = idx
-
-        # Track first instances for replicated scenes
-        first_instances = {}  # Map object paths to their first instance IDs
-        for idx, obj in enumerate(assigned_scenes[0].objects):
-            first_instances[obj.object_path] = idx
-
-        # Process remaining scenes to mark non-first instances
-        for scene in assigned_scenes[1:]:
-            for obj in scene.objects:
-                if obj.object_path in first_instances:
-                    first_instance_id = first_instances[obj.object_path]
-                    spawn_info = SpawnInfo(
-                        id=first_instance_id,  # Use the ID of the first instance
-                        object_path=obj.object_path,
-                        object_options=obj.options,
-                        object_dims=self._object_spawn_list[first_instance_id].object_dims,
-                        is_first_instance=False,
-                        first_instance_id=first_instance_id
-                    )
-                    self._object_spawn_list.append(spawn_info)
-
-        self._total_spawned_scenes = len(assigned_scenes)
-        self.scenes = assigned_scenes
-        # Automatically combine object motions so the user does not have to call it
-        self.combine_object_motions()
-        return assigned_scenes
     def create_scenes(self, scenes: List[Scene], terrain: Terrain, assign_method: str = "sequential", replicate_method: str = "random") -> List[Scene]:
         """
         Create and assign scenes to environments using configurations from the Terrain object.
@@ -354,7 +223,6 @@ class SceneLib:
         # Create object spawn list from the first scene (canonical objects)
         for idx, obj in enumerate(assigned_scenes[0].objects):
             min_x, max_x, min_y, max_y, min_z, max_z = self.compute_object_dims(obj.object_path)
-            # min_x, max_x, min_y, max_y, min_z, max_z = self.compute_usd_dims(obj.object_path)
             
             spawn_info = SpawnInfo(
                 id=idx,  # First instance gets its index as ID
@@ -362,7 +230,7 @@ class SceneLib:
                 object_options=obj.options,
                 object_dims=(min_x, max_x, min_y, max_y, min_z, max_z),
                 is_first_instance=True,
-                first_instance_id=idx,
+                first_instance_id=idx
             )
             self._object_spawn_list.append(spawn_info)
             self._object_path_to_id[obj.object_path] = idx
@@ -383,7 +251,7 @@ class SceneLib:
                         object_options=obj.options,
                         object_dims=self._object_spawn_list[first_instance_id].object_dims,
                         is_first_instance=False,
-                        first_instance_id=first_instance_id,
+                        first_instance_id=first_instance_id
                     )
                     self._object_spawn_list.append(spawn_info)
 
@@ -393,47 +261,6 @@ class SceneLib:
         self.combine_object_motions()
         return assigned_scenes
     
-    def compute_usd_dims(self, usd_path: str):
-        """
-        Compute axis-aligned world-space bounding box for all Boundable prims in a USD file.
-
-        Args:
-            usd_path: Path to a .usd/.usda/.usdc file.
-
-        Returns:
-            A tuple (min_x, max_x, min_y, max_y, min_z, max_z).
-        """
-        # 1. 打开 USD Stage
-        stage = Usd.Stage.Open(usd_path)
-        if not stage:
-            raise RuntimeError(f"无法打开 USD 文件：{usd_path}")
-
-        # 2. 构造带有所有必要 purposes 的 BBoxCache
-        included = [
-            UsdGeom.Tokens.default_,
-            UsdGeom.Tokens.render,
-            UsdGeom.Tokens.proxy,
-            UsdGeom.Tokens.guide,
-        ]
-        cache = UsdGeom.BBoxCache(Usd.TimeCode.Default(), included)
-
-        # 3. 遍历 stage 中所有 Boundable prim，累积 world-space 包围盒
-        world_bbox = Gf.BBox3d()  # 初始为空
-        for prim in stage.Traverse():
-            if prim.IsA(UsdGeom.Boundable):
-                prim_bbox = cache.ComputeWorldBound(prim)
-                world_bbox = Gf.BBox3d.Combine(world_bbox, prim_bbox)
-
-        # 4. 提取最小/最大点
-        axis_aligned_range = world_bbox.GetRange()           # 或者 GetBox()
-        min_pt = axis_aligned_range.GetMin()                 # Gf.Vec3d
-        max_pt = axis_aligned_range.GetMax()                 # Gf.Vec3d
-
-        return (
-            float(min_pt[0]), float(max_pt[0]),
-            float(min_pt[1]), float(max_pt[1]),
-            float(0), float(max_pt[2]-min_pt[2]),
-        )
     def compute_object_dims(self, object_path):
         obj_path = object_path.replace(".urdf", ".obj").replace(".usda", ".obj").replace(".usd", ".obj")
         stl_path = object_path.replace(".urdf", ".stl").replace(".usda", ".stl").replace(".usd", ".stl")

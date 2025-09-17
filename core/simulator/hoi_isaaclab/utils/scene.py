@@ -3,19 +3,20 @@ from core.simulator.base_simulator.config import RobotConfig
 import isaaclab.sim as sim_utils
 from isaaclab.assets import ArticulationCfg, AssetBaseCfg
 from isaaclab.actuators import IdealPDActuatorCfg
-from isaaclab.utils import configclass
+from myisaaclab.utils import configclass
 from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.sensors import ContactSensorCfg
 from isaaclab.terrains.terrain_importer_cfg import TerrainImporterCfg
 from isaaclab.assets import RigidObjectCfg
 from isaaclab.utils.assets import ISAACLAB_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR
-from core.simulator.isaaclab.utils.usd_utils import (
+from core.simulator.myisaaclab.utils.usd_utils import (
     TrimeshTerrainImporter,
 )
-from core.simulator.isaaclab.utils.robots import (
+from core.simulator.myisaaclab.utils.robots import (
     SMPL_CFG,
     SMPLX_CFG,
     H1_CFG,
+    G1_CFG,
 )
 
 
@@ -37,13 +38,29 @@ class SceneCfg(InteractiveSceneCfg):
         config,
         robot_config: RobotConfig,
         terrain,
-        scene_cfgs=None,
+        scene_cfgs=None, 
+        objects_type= None,
         pretty=False,
         *args,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
         robot_type = robot_config.asset.robot_type
+            
+        # spawn_cfg = sim_utils.UsdFileCfg(
+        #             usd_path="/home/luohy/MyRepository/MyDataSets/Objects/cup/088/physics_instance.usd",  # USD 文件路径
+        #             scale=(0.01, 0.01, 0.01),          # 将模型在XYZ方向均缩小到原来的一半
+        #             rigid_props=sim_utils.RigidBodyPropertiesCfg(
+        #                 kinematic_enabled=False,  # 设置为动态对象
+        #             ),
+        #             # 如果不需要关节属性可以不传 articulation_props
+        #         ),
+        # self.wall = RigidObjectCfg(
+        #     prim_path="/World/envs/env_.*/Wall",
+        #     spawn=spawn_cfg,
+        # )
+    
+
         # lights
         if True:  # pretty:
             # This is way prettier, but also slower to render
@@ -61,6 +78,7 @@ class SceneCfg(InteractiveSceneCfg):
                     intensity=3000.0, color=(0.75, 0.75, 0.75)
                 ),
             )
+        # TODO: filter_prim_paths_expr=[f"/World/objects/object_{i}" for i in range(0)],这个是表示传感器和哪个物体碰撞会被关注，所以后面需要去修改以实现！
 
         # articulation
         if robot_type == "smpl_humanoid":
@@ -118,21 +136,35 @@ class SceneCfg(InteractiveSceneCfg):
             raise ValueError(f"Unsupported robot type: {robot_type}")
 
         if scene_cfgs is not None:
+            if objects_type is None:
+                raise ValueError("objects_type must be specified when scene_cfgs is not None")
             for obj_idx, obj_configs in enumerate(scene_cfgs):
-                spawn_cfg = sim_utils.MultiAssetSpawnerCfg(
-                    activate_contact_sensors=True,
-                    assets_cfg=obj_configs,
-                    random_choice=False,
-                    collision_props=sim_utils.CollisionPropertiesCfg(
-                        contact_offset=0.002, rest_offset=0.0
-                    ),
-                )
-                # Rigid Object
-                object = RigidObjectCfg(
-                    prim_path=f"/World/envs/env_.*/Object_{obj_idx}",
-                    spawn=spawn_cfg,
-                    init_state=RigidObjectCfg.InitialStateCfg(),
-                )
+                if objects_type[obj_idx] == "rigid":
+                    # Spawn the rigid object
+                    spawn_cfg = sim_utils.MultiAssetSpawnerCfg(
+                        assets_cfg=obj_configs,
+                        random_choice=False,
+                    )
+                    object = RigidObjectCfg(
+                        prim_path=f"/World/envs/env_.*/Object_{obj_idx}",
+                        spawn=spawn_cfg,
+                        init_state=RigidObjectCfg.InitialStateCfg(),
+                    )
+
+                elif objects_type[obj_idx] == "articulation":
+                    # Spawn the articulation object
+                    spawn_cfg = sim_utils.MultiAssetSpawnerCfg(
+                        assets_cfg=obj_configs,
+                        random_choice=False,
+                    )
+                    object = ArticulationCfg(
+                        prim_path=f"/World/envs/env_.*/Object_{obj_idx}",
+                        spawn=spawn_cfg,
+                        init_state=ArticulationCfg.InitialStateCfg(),
+                    )
+                else:
+                    raise ValueError(f"Unsupported objects_type: {objects_type[obj_idx]}")
+                
                 setattr(self, f"object_{obj_idx}", object)
 
 
@@ -147,6 +179,7 @@ class SceneCfg(InteractiveSceneCfg):
             mdl_path="{NVIDIA_NUCLEUS_DIR}/Materials/Base/Architecture/Shingles_01.mdl",
             project_uvw=True,
         )
+        # TODO:将这个要改为依据terrain_type来判断是Flatten还是Trimesh
         if isinstance(terrain, FlatTerrain):
             # When using a flat terrain, we spawn the built-in plane.
             # This is faster and more memory efficient than spawning a trimesh terrain.
