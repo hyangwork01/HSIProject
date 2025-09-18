@@ -1,6 +1,6 @@
 # @package _global_
 
-num_envs: 4096
+num_envs: 1024
 agent:
   _target_: core.agents.ppo.agent.PPO
   _recursive_: False
@@ -23,7 +23,7 @@ agent:
     normalize_values: True
     normalized_val_clamp_value: 5
     normalize_advantage: True
-    batch_size: 16384
+    batch_size: 4096
     task_reward_w: 1.0
     num_mini_epochs: 1
     max_eval_steps: null

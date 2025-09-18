@@ -208,7 +208,7 @@ class Terrain:
 
         return flat_locs
 
-    def _curriculum(self, n_subterrains_per_level, n_levels):
+    def curriculum(self, n_subterrains_per_level, n_levels):
         for subterrain_idx in range(n_subterrains_per_level):
             for level_idx in range(n_levels):
                 subterrain = SubTerrain(self.config, "terrain", device=self.device)
