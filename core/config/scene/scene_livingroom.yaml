@@ -5,7 +5,7 @@ defaults:
 scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Home/Livingroom
 scenes_name: Livingroom
 scenes:
-  - scene_id: '002'
+  - scene_id: 2
     scene_path: '002'
     filter_list: [14, 15, 16, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 
           184, 185, 186, 187, 188, 189, 190, 191]

@@ -13,7 +13,7 @@ from isaaclab.sim.schemas import (
 import os
 from typing import Dict, Tuple, Optional
 
-from isaaclab.assets import RigidObjectCfg
+from isaaclab.assets import RigidObjectCfg,RigidObjectCollectionCfg
 
 
 # Setup logging
@@ -123,8 +123,7 @@ class SceneLib:
         self.device = device
 
         self.scene_id: Optional[str] = None
-        self._rigid_objects_cfg_list: Dict[str, RigidObjectCfg] = {}
-        self._rigid_objects_collection_cfg_list: Dict[str, List[RigidObjectCollectionCfg]] = {}
+        self._scenes_registry: Dict[str, Dict[str, Dict]] = {}
         self.num_objects_per_scene: Optional[int] = None
 
 
@@ -140,8 +139,9 @@ class SceneLib:
         self.enforce_static_gte_dynamic: bool = True
         self.rand_seed: Optional[int] = None
 
+
         # 构建场景配置（你已有的逻辑）
-        self.create_scene_cfg()
+        self._create_scene_cfg()
         self.count_objects()
 
         # 基于上面成员“生成随机材质桶”
@@ -203,25 +203,6 @@ class SceneLib:
                 self.rand_bucket.apply_to_prim(prim_path, physics_mat=pm, collider=cp, mass=ms)
 
     # ---------------- 内部：构桶 & 工具 ----------------
-    def _build_random_material_bucket(self):
-        """根据 SceneLib 成员生成 RandomMaterialBucket。"""
-        self.rand_bucket = RandomMaterialBucket(
-            phys_friction_range=self.phys_friction_range,
-            restitution_range=self.restitution_range,
-            mass_range=self.mass_range,
-            rest_offset_range=self.rest_offset_range,
-            contact_offset_margin=self.contact_offset_margin,
-            num_phys=self.num_rand_phys,
-            num_mass=self.num_rand_mass,
-            num_collider=self.num_rand_collider,
-            enforce_static_gte_dynamic=self.enforce_static_gte_dynamic,
-            seed=self.rand_seed,
-        )
-
-        # 可选：提前把所有物理材质 prim 生成出来，避免 reset 时首次绑定的延迟
-        for name in self.rand_bucket.phys_keys():
-            self.rand_bucket._spawn_phys_material(name)
-
     def _expand_prim_paths(self, prim_path_template: str) -> List[str]:
         """将形如 '/World/envs/env_.*/Object_1' 的模板展开为每个 env 的实际 prim 路径。"""
         # 简单替换：若模板包含 'env_.*/'，按 num_envs 展开
@@ -234,55 +215,160 @@ class SceneLib:
         else:
             return [prim_path_template]
 
-    # ---------------- 你已有的场景构建逻辑（示例占位） ----------------
-    def create_scene_cfg(self):
-        scenes = self.cfg.get("scenes", []) or []
+    def _build_random_material_bucket(self):
+        """基于 SceneLib 的成员，构建一次随机材质桶，供 reset 随机化使用。"""
+        self.rand_bucket = RandomMaterialBucket(
+            phys_friction_range=self.phys_friction_range,
+            restitution_range=self.restitution_range,
+            mass_range=self.mass_range,
+            rest_offset_range=self.rest_offset_range,
+            contact_offset_margin=self.contact_offset_margin,
+            num_phys=self.num_rand_phys,
+            num_mass=self.num_rand_mass,
+            num_collider=self.num_rand_collider,
+            enforce_static_gte_dynamic=self.enforce_static_gte_dynamic,
+            seed=self.rand_seed,
+        )
+        # 可选：提前把所有刚体材质 prim 生成好，避免首次绑定时的额外延迟
+        self.rand_bucket.pre_spawn_all_phys_materials()
+
+    def _create_scene_cfg(self):
+        """
+        遍历 cfg['scenes']，仅构建 RigidObject（以及每个场景的 RigidObjectCollectionCfg）。
+        - self.num_objects_per_scene：所有场景里**刚体数**的最大值
+        """
+
+        scenes: List[dict] = self.cfg.get("scenes", []) or []
         scenes_abspath = self.cfg.get("scenes_abspath")
         scenes_name = self.cfg.get("scenes_name")
 
-        for scene in scenes:
-            if self.scene_id is None:
-                self.scene_id = scene.get("scene_id")
-            if scene.get("scene_id") != self.scene_id:
-                continue
+        per_scene_counts: Dict[str, int] = {}
+        max_obj_count_over_scenes = 0
+
+        for idx, scene in enumerate(scenes):
+            scene_id = scene.get("scene_id")
 
             scene_path = scene.get("scene_path")
             scene_abspath = os.path.join(scenes_abspath, scene_path)
-            filter_list = set(scene.get("filter_list") or [])
-            rigidbody_list = set(scene.get("rigidbody_list") or [])
-            print(f"About to create the “{scenes_name}” scene at path: {scene_abspath}")
 
+            filter_list = set(scene.get("filter_list") or [])
+            rigidbody_list = set(scene.get("rigidbody_list") or [])  # 若为空，视为不过滤
+
+            logger.info(f"[SceneLib] Pre-building scene \"{scenes_name}\" (id={scene_id:03d}) from: {scene_abspath}")
+
+            # —— 收集该场景的 rigid objects，并组装一个 collection cfg ——
+            ro_cfgs: Dict[str, RigidObjectCfg] = {}
+            roc_cfgs: Dict[str, RigidObjectCollectionCfg] = {}
+
+            # ============== 加载场景中的单个的RigidObject ==============
             for obj in scene.get("objects", []):
                 obj_id = obj.get("obj_id")
                 if obj_id in filter_list:
                     continue
+                if rigidbody_list and (obj_id not in rigidbody_list):
+                    continue
 
-                obj_abspath = os.path.join(scene_abspath, obj.get("obj_path"))
+                obj_path_rel = obj.get("obj_path")
+                if not obj_path_rel:
+                    logger.warning(f"[SceneLib] scene {scene_id}: object {obj_id} missing 'obj_path', skip.")
+                    continue
+                obj_usd_path = os.path.join(scene_abspath, obj_path_rel) # 相对路径 -> 绝对路径
+
+                # 位姿/尺度
                 pos = tuple(obj.get("obj_translate", [0.0, 0.0, 0.0]))
-                q = obj.get("obj_rotateXYZW", [0.0, 0.0, 0.0, 1.0])
-                rot_wxyz = (q[3], q[0], q[1], q[2])  # (w,x,y,z)
+                q_xyzw = obj.get("obj_rotateXYZW", [0.0, 0.0, 0.0, 1.0])
+                rot_wxyz = tuple(q_xyzw[3], q_xyzw[0], q_xyzw[1], q_xyzw[2])  # (w,x,y,z)
                 scale = tuple(obj.get("obj_scale", [1.0, 1.0, 1.0]))
 
-                if obj_id in rigidbody_list:
+                # 物理/碰撞/质量（加载阶段给一个基础值；随机化在 reset 再改）
+                rigid_props = sim_utils.RigidBodyPropertiesCfg(rigid_body_enabled=True, kinematic_enabled=False)
+                collision_props = sim_utils.CollisionPropertiesCfg(collision_enabled=True, contact_offset=0.002, rest_offset=0.0)
+                mass_props = sim_utils.MassPropertiesCfg(density=None)
+
+                spawn_cfg = sim_utils.UsdFileCfg(
+                    usd_path=str(obj_usd_path),
+                    scale=scale,
+                    rigid_props=rigid_props,
+                    collision_props=collision_props,
+                    mass_props=mass_props,
+                    activate_contact_sensors=True,
+                )  # UsdFileCfg 属于文件导入型 spawner，支持上述属性覆盖。:contentReference[oaicite:6]{index=6}
+
+                # 为避免跨场景重名：{scene_id}__Object{obj_id}
+                obj_name = f"{scene_id:03d}__Object{obj_id:03d}"
+                # 把对象统一挂在 /World/envs/env_.*/Scenes/{scene_id}/ 下，便于后续按场景切换/引用
+                prim_path = f"/World/envs/env_.*/Scenes/{scene_id}/{obj_name}"
+
+                obj_cfg = RigidObjectCfg(
+                    prim_path=prim_path,
+                    spawn=spawn_cfg,
+                    init_state=RigidObjectCfg.InitialStateCfg(pos=pos, rot=rot_wxyz),
+                )  # RigidObjectCfg 定义与初始状态。:contentReference[oaicite:7]{index=7}
+
+                ro_cfgs[obj_name] = obj_cfg
+                self._rigid_objects_cfg_list[obj_name] = obj_cfg  # 汇总池
+
+            # ============== 加载场景中的RigidObjectCollection ==============
+            for collection in scene.get("collections", []):
+                collection_id = collection.get("collection_id")
+                col_objs: Dict[str, RigidObjectCfg] = {}
+                collection_name = f"{scene_id:03d}__Collection{collection_id:03d}"
+
+                for obj in collection.get("objects", []):
+                    obj_id = obj.get("obj_id")
+                    obj_path_rel = obj.get("obj_path")
+                    obj_usd_path = os.path.join(scene_abspath, obj_path_rel) # 相对路径 -> 绝对路径
+                    obj_name = f"{scene_id:03d}__Collection{collection_id:03d}_Object{obj_id:03d}"
+
+                    # 位姿/尺度
+                    pos = tuple(obj.get("obj_translate", [0.0, 0.0, 0.0]))
+                    q_xyzw = obj.get("obj_rotateXYZW", [0.0, 0.0, 0.0, 1.0])
+                    rot_wxyz = tuple(q_xyzw[3], q_xyzw[0], q_xyzw[1], q_xyzw[2])  # (w,x,y,z)
+                    scale = tuple(obj.get("obj_scale", [1.0, 1.0, 1.0]))
+
+                    # 物理/碰撞/质量（加载阶段给一个基础值；随机化在 reset 再改）
                     rigid_props = sim_utils.RigidBodyPropertiesCfg(rigid_body_enabled=True, kinematic_enabled=False)
                     collision_props = sim_utils.CollisionPropertiesCfg(collision_enabled=True, contact_offset=0.002, rest_offset=0.0)
                     mass_props = sim_utils.MassPropertiesCfg(density=None)
 
                     spawn_cfg = sim_utils.UsdFileCfg(
-                        usd_path=str(obj_abspath),
+                        usd_path=str(obj_usd_path),
                         scale=scale,
                         rigid_props=rigid_props,
                         collision_props=collision_props,
                         mass_props=mass_props,
                         activate_contact_sensors=True,
                     )
-                    name = f"Object_{obj_id}"
-                    self._rigid_objects_cfg_list[name] = RigidObjectCfg(
-                        prim_path=f"/World/envs/env_.*/{name}",
+                    prim_path = f"/World/envs/env_.*/Scenes/{scene_id}/{collection_name}/{obj_name}"
+                    obj_cfg = RigidObjectCfg(
+                        prim_path=prim_path,
                         spawn=spawn_cfg,
                         init_state=RigidObjectCfg.InitialStateCfg(pos=pos, rot=rot_wxyz),
                     )
-            break  # 只处理匹配的第一个 scene_id
+                    col_objs[obj_name] = obj_cfg
 
-    def count_objects(self):
-        self.num_objects_per_scene = len(self._rigid_objects_cfg_list)
+                if col_objs:
+                    collection_cfg = RigidObjectCollectionCfg(rigid_objects=col_objs)
+                    roc_cfgs[collection_name] = collection_cfg
+
+            # 2.3) 统计该 scene 的总物体数（独立对象 + 所有集合内对象）
+            count_individual = len(ro_cfgs)
+            count_in_collections = sum(len(c.rigid_objects) for c in roc_cfgs.values())
+            total_in_scene = count_individual + count_in_collections
+            max_obj_count_over_scenes = max(max_obj_count_over_scenes, total_in_scene)
+
+            # 写入注册表
+            self._scenes_registry[f"{scene_id:03d}"] = {
+                "rigid_objects": ro_cfgs,
+                "collections": roc_cfgs,
+                "total_count": total_in_scene,
+            }
+        
+
+        self.num_objects_per_scene = max_obj_count_over_scenes
+        logger.info(f"[SceneLib] Max rigid objects per scene = {self.num_objects_per_scene}")
+
+        print(f"=============== SceneLib Init ===============" 
+              f"[SceneLib] 总共Scene数:f{len(self._scenes_registry)}: "
+              f"可以使用的场景ID: {sorted(list(self._scenes_registry.keys()))}"
+              f"(num_objects_per_scene(单个场景内刚体数最大值): {self.num_objects_per_scene})")
