@@ -1,455 +1,288 @@
 import logging
+# ===== 放在文件靠前位置：轻量随机材质桶 =====
+from dataclasses import dataclass
+from typing import Dict, Optional, Tuple, List
 import random
-import copy
-from dataclasses import dataclass, field, MISSING
-from typing import List, Optional, Tuple, Dict,Type
-from isaac_utils import torch_utils
-import torch
-import trimesh
-import os
-from pathlib import Path
-
-from core.envs.hoi.env_utils.object_utils import (
-    as_mesh,
-    compute_bounding_box,
+import isaaclab.sim as sim_utils
+from isaaclab.sim.schemas import (
+    CollisionPropertiesCfg,
+    MassPropertiesCfg,
+    modify_collision_properties,
+    modify_mass_properties,
 )
-# from core.scenelib.utils.usd_utils import (compute_usd_dims)
+import os
+from typing import Dict, Tuple, Optional
 
-from core.envs.hoi.components.terrains.hoi_terrain import SceneTerrain
+from isaaclab.assets import RigidObjectCfg
+
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+@dataclass
+class _PhysMat:
+    static_friction: float
+    dynamic_friction: float
+    restitution: float
 
 @dataclass
-class ObjectMotion:
-    """
-    Contains motion data for an object.
-    Frames is a list of dictionaries. Each frame is expected to have keys:
-      'translation': tuple of 3 floats,
-      'rotation': tuple of 4 floats.
-    fps: Frames per second for the motion (default is 30.0).
-    """
-    frames: List[dict] = field(default_factory=list)
-    fps: float = None
-
+class _ColliderPreset:
+    rest_offset: float
+    contact_offset: float
 
 @dataclass
-class ObjectOptions:
-    """
-    Contains options for configuring object properties in the simulator.
-    """
-    # fix_base_link: bool = field(default=MISSING)
-    # vhacd_enabled: bool = None
-    # vhacd_params: Dict = field(default_factory=lambda: {
-    #     "resolution": None,
-    #     "max_convex_hulls": None,
-    #     "max_num_vertices_per_ch": None,
-    # })
-    # density: float = None
-    # angular_damping: float = None
-    # linear_damping: float = None
-    # max_angular_velocity: float = None
-    # default_dof_drive_mode: str = None
-    # override_com: bool = None
-    # override_inertia: bool = None
-    visual_material: bool = True # 若为False，则不加载visual
+class _MassPreset:
+    mass: Optional[float] = None
+    density: Optional[float] = None
 
-    def to_dict(self) -> Dict:
-        """Convert options to a dictionary, excluding None values."""
-        options_dict = {}
-        for field_name, field_value in self.__dict__.items():
-            if field_value is not None:
-                options_dict[field_name] = field_value
-        return options_dict
+class RandomMaterialBucket:
+    """按范围随机生成若干“物理材质/质量/碰撞偏移”预设，并能应用到给定 prim。"""
+    def __init__(
+        self,
+        *,
+        phys_friction_range: Tuple[float, float],
+        restitution_range: Tuple[float, float],
+        mass_range: Tuple[float, float],
+        rest_offset_range: Tuple[float, float],
+        contact_offset_margin: float,
+        num_phys: int,
+        num_mass: int,
+        num_collider: int,
+        enforce_static_gte_dynamic: bool = True,
+        seed: Optional[int] = None,
+    ):
+        if seed is not None:
+            random.seed(seed)
+        self._phys: Dict[str, _PhysMat] = {}
+        self._mass: Dict[str, _MassPreset] = {}
+        self._coll: Dict[str, _ColliderPreset] = {}
+        self._spawned_phys_paths: Dict[str, str] = {}
 
-@dataclass
-class RigidOptions(ObjectOptions):
-    # mass_props
-    density: float = None # 加载mass_props时使用
+        for i in range(max(0, int(num_phys))):
+            sf = random.uniform(*phys_friction_range)
+            df = random.uniform(phys_friction_range[0], sf) if enforce_static_gte_dynamic else random.uniform(*phys_friction_range)
+            rs = random.uniform(*restitution_range)
+            self._phys[f"phys_rand_{i}"] = _PhysMat(sf, df, rs)
 
-    # rigid_props
-    rigid_body_enabled: bool = True 
-    kinematic_enabled: bool = False # False则不固定物体，True则固定物体
-    angular_damping: float = None
-    linear_damping: float = None
-    max_linear_velocity: float = None
-    max_angular_velocity: float = None
-    retain_accelerations: bool = None
+        for i in range(max(0, int(num_mass))):
+            m = random.uniform(*mass_range)
+            self._mass[f"mass_rand_{i}"] = _MassPreset(mass=m, density=None)
 
-    # collision_props
-    collision_enabled: bool = True
-    
-    
-    # activate_contact_sensors
-    activate_contact_sensors: bool = False
+        for i in range(max(0, int(num_collider))):
+            r = random.uniform(*rest_offset_range)
+            c = r + random.uniform(0.0, max(0.0, contact_offset_margin))
+            self._coll[f"collider_rand_{i}"] = _ColliderPreset(r, c)
 
-    
+    # 预先在 /World/Materials/Physics 生成刚体材质（便于后续绑定）
+    def pre_spawn_all_phys_materials(self):
+        for name in self._phys.keys():
+            self._spawn_phys(name)
 
-@dataclass
-class ArticulationOptions(ObjectOptions):
-    # mass_props
-    density: float = None
+    def _spawn_phys(self, name: str) -> str:
+        if name in self._spawned_phys_paths:
+            return self._spawned_phys_paths[name]
+        p = self._phys[name]
+        prim_path = f"/World/Materials/Physics/{name}"
+        mat_cfg = sim_utils.RigidBodyMaterialCfg(
+            static_friction=p.static_friction,
+            dynamic_friction=p.dynamic_friction,
+            restitution=p.restitution,
+        )
+        mat_cfg.func(prim_path, mat_cfg)  # 生成材质 Prim（Isaac Lab spawner API）
+        self._spawned_phys_paths[name] = prim_path
+        return prim_path
 
-    # rigid_props
-    rigid_body_enabled: bool = True 
-    kinematic_enabled: bool = True 
-    angular_damping: float = None
-    linear_damping: float = None
-    max_linear_velocity: float = None
-    max_angular_velocity: float = None
-    retain_accelerations: bool = None
+    def phys_keys(self) -> List[str]: return list(self._phys.keys())
+    def mass_keys(self) -> List[str]: return list(self._mass.keys())
+    def coll_keys(self) -> List[str]: return list(self._coll.keys())
 
-    # articulation_props
-    articulation_enabled: bool = True
-    enabled_self_collisions: bool = False
-    fix_root_link: bool = True
+    def sample_combo(self) -> Tuple[str, str, str]:
+        import random
+        return (random.choice(self.phys_keys()),
+                random.choice(self.coll_keys()),
+                random.choice(self.mass_keys()))
 
-@dataclass
-class SceneObject:
-    """
-    Represents an object inside a scene.
-    Defaults to translation (0,0,0) and rotation (0,0,0,1) if not provided.
-    """
-    object_path: str = field(default=MISSING)
-    translation: Tuple[float, float, float] = field(default=MISSING)
-    rotation: Tuple[float, float, float, float] = field(default=MISSING)
-    scale: Tuple[float, float, float] = field(default=MISSING)
-    object_type: str = field(default=MISSING)
-    id: int = field(default=MISSING)
-    options: ObjectOptions = field(default_factory=ObjectOptions)
-    motion: Optional[ObjectMotion] = None
-    object_dims: Tuple[float, float, float, float, float, float] = None
+    def apply_to_prim(self, prim_path: str, *, physics_mat: Optional[str], collider: Optional[str], mass: Optional[str]):
+        if physics_mat:
+            path = self._spawn_phys(physics_mat)
+            # 运行时绑定刚体材质（覆盖子树。Isaac Lab 提供 sim.utils 的绑定函数）
+            sim_utils.bind_physics_material(prim_path, path, stronger_than_descendants=True)  # :contentReference[oaicite:3]{index=3}
+        if collider:
+            cp = self._coll[collider]
+            modify_collision_properties(prim_path, CollisionPropertiesCfg(rest_offset=cp.rest_offset, contact_offset=cp.contact_offset))  # :contentReference[oaicite:4]{index=4}
+        if mass:
+            mp = self._mass[mass]
+            modify_mass_properties(prim_path, MassPropertiesCfg(mass=mp.mass, density=mp.density))  # :contentReference[oaicite:5]{index=5}
 
-
-
-
-@dataclass
-class Scene:
-    """
-    Represents a scene consisting of one or more SceneObjects.
-    An offset (x, y) indicates the scene's location.
-    """
-    # rigid_objects: List[SceneObject] = field(default_factory=list)
-    # articulation_objects: List[SceneObject] = field(default_factory=list)
-    objects: List[SceneObject] = field(default_factory=list)
-    offset: Tuple[float, float] = (0.0, 0.0)
-
-    def add_object(self, scene_object: SceneObject):
-        """Add an object to the scene."""
-        self.objects.append(scene_object)
-
-
-@dataclass
-class ObjectState:
-    """
-    Represents the state of an object, including translations and rotations as torch tensors.
-    """
-    translations: torch.Tensor
-    rotations: torch.Tensor
-
-
-# @dataclass
-# class SpawnInfo:
-#     """
-#     Contains information about how to spawn an object in the scene.
-#     """
-#     id: int
-#     object_path: str
-#     object_options: ObjectOptions
-#     object_dims: Tuple[float, float, float, float, float, float] = None
-#     is_first_instance: bool = True
-#     first_instance_id: int = None
 
 class SceneLib:
-    """
-    A simplified scene library.
-
-    - The user instantiates SceneLib with a config dictionary (which contains num_envs and scene offset parameters) and a device string.
-    - Scenes are provided as a list of Scene dataclasses via create_scenes(). If fewer scenes than num_envs are provided,
-      scenes are replicated (either sequentially or randomly).
-    - Object motions (a list of frames per SceneObject) are combined into unified tensors stored within the SceneLib instance.
-    - The get_object_pose method interpolates the pose of an object at a specified time using delta time (dt).
-
-    Note: SceneObjects no longer have explicit IDs; their order defines their unique index.
-    """
-    def __init__(self,cfg, num_envs: int,device: str = "cpu"):
-        """
-        Args:
-            config: Dictionary containing keys:
-                - num_envs: int, number of environments.
-            device: Device identifier for torch tensors.
-        """
-        self.device = device
-        self.num_envs = num_envs
-        self.scenes: List[Scene] = []
-        self.num_objects_per_scene = None
-        self._total_spawned_scenes = 0
-        self._scene_offsets = []
-        # self._object_spawn_list = []
-        # self._object_path_to_id = {}
-
-        # Placeholders for aggregated motion data
-        self.object_translations = None
-        self.object_rotations = None
-        self.motion_lengths = None  # In seconds, per object
-        self.motion_starts = None   # Starting index in the unified tensor for each object
-        self.motion_dts = None      # Delta time for each object's motion
-        self.motion_num_frames = None  # Number of frames in each object's motion
-        
+    def __init__(self,cfg,num_envs: int,device: str = "cpu"):
         self.cfg = cfg
-            
+        self.num_envs = num_envs
+        self.device = device
 
-    def create_single_scene(self,scene_id) -> Scene:
-        flag = False
-        scenes =self.cfg.get("scenes",[])
+        self.scene_id: Optional[str] = None
+        self._rigid_objects_cfg_list: Dict[str, RigidObjectCfg] = {}
+        self._rigid_objects_collection_cfg_list: Dict[str, List[RigidObjectCollectionCfg]] = {}
+        self.num_objects_per_scene: Optional[int] = None
+
+
+        # ===== 在 SceneLib 内声明“随机材质桶”的参数（可在外部修改这些成员来重建桶） =====
+        self.num_rand_phys: int = 5
+        self.num_rand_mass: int = 5
+        self.num_rand_collider: int = 5
+        self.phys_friction_range: Tuple[float, float] = (0.0, 1.2)
+        self.restitution_range: Tuple[float, float] = (0.0, 0.5)
+        self.mass_range: Tuple[float, float] = (0.1, 5.0)
+        self.rest_offset_range: Tuple[float, float] = (0.0, 0.005)
+        self.contact_offset_margin: float = 0.005
+        self.enforce_static_gte_dynamic: bool = True
+        self.rand_seed: Optional[int] = None
+
+        # 构建场景配置（你已有的逻辑）
+        self.create_scene_cfg()
+        self.count_objects()
+
+        # 基于上面成员“生成随机材质桶”
+        self._build_random_material_bucket()
+
+    # ---------------- 公共 API ----------------
+    def configure_random_bucket(
+        self,
+        *,
+        num_rand_phys: Optional[int] = None,
+        num_rand_mass: Optional[int] = None,
+        num_rand_collider: Optional[int] = None,
+        phys_friction_range: Optional[Tuple[float, float]] = None,
+        restitution_range: Optional[Tuple[float, float]] = None,
+        mass_range: Optional[Tuple[float, float]] = None,
+        rest_offset_range: Optional[Tuple[float, float]] = None,
+        contact_offset_margin: Optional[float] = None,
+        enforce_static_gte_dynamic: Optional[bool] = None,
+        seed: Optional[int] = None,
+        rebuild: bool = True,
+    ):
+        """外部可随时修改 SceneLib 的随机化参数；需要的话重建桶。"""
+        if num_rand_phys is not None: self.num_rand_phys = num_rand_phys
+        if num_rand_mass is not None: self.num_rand_mass = num_rand_mass
+        if num_rand_collider is not None: self.num_rand_collider = num_rand_collider
+        if phys_friction_range is not None: self.phys_friction_range = phys_friction_range
+        if restitution_range is not None: self.restitution_range = restitution_range
+        if mass_range is not None: self.mass_range = mass_range
+        if rest_offset_range is not None: self.rest_offset_range = rest_offset_range
+        if contact_offset_margin is not None: self.contact_offset_margin = contact_offset_margin
+        if enforce_static_gte_dynamic is not None: self.enforce_static_gte_dynamic = enforce_static_gte_dynamic
+        if seed is not None: self.rand_seed = seed
+        if rebuild:
+            self._build_random_material_bucket()
+
+    def reset_randomize_all(self) -> Dict[str, Tuple[str, str, str]]:
+        """
+        在 reset 时对所有对象进行随机化，返回分配表：
+        { obj_name: (physics_mat_name, collider_preset_name, mass_preset_name) }
+        """
+        assignments: Dict[str, Tuple[str, str, str]] = {}
+        for obj_name in self._rigid_objects_cfg_list.keys():
+            assignments[obj_name] = self.rand_bucket.sample_combo()
+        self.apply_bucket_assignments(assignments)
+        return assignments
+
+    def apply_bucket_assignments(self, assignments: Dict[str, Tuple[str, str, str]]):
+        """
+        把给定的(物理材质, 碰撞器偏移, 质量)三元组分配应用到每个对象。
+        注意：如果 prim_path 模板里有 env 通配符，本函数会对每个 env 展开。
+        """
+        for obj_name, (pm, cp, ms) in assignments.items():
+            obj_cfg = self._rigid_objects_cfg_list.get(obj_name)
+            if obj_cfg is None:
+                continue
+            # 展开 env 通配路径（/World/envs/env_.*/Object_X -> /World/envs/env_i/Object_X）
+            prim_paths = self._expand_prim_paths(obj_cfg.prim_path)
+            for prim_path in prim_paths:
+                self.rand_bucket.apply_to_prim(prim_path, physics_mat=pm, collider=cp, mass=ms)
+
+    # ---------------- 内部：构桶 & 工具 ----------------
+    def _build_random_material_bucket(self):
+        """根据 SceneLib 成员生成 RandomMaterialBucket。"""
+        self.rand_bucket = RandomMaterialBucket(
+            phys_friction_range=self.phys_friction_range,
+            restitution_range=self.restitution_range,
+            mass_range=self.mass_range,
+            rest_offset_range=self.rest_offset_range,
+            contact_offset_margin=self.contact_offset_margin,
+            num_phys=self.num_rand_phys,
+            num_mass=self.num_rand_mass,
+            num_collider=self.num_rand_collider,
+            enforce_static_gte_dynamic=self.enforce_static_gte_dynamic,
+            seed=self.rand_seed,
+        )
+
+        # 可选：提前把所有物理材质 prim 生成出来，避免 reset 时首次绑定的延迟
+        for name in self.rand_bucket.phys_keys():
+            self.rand_bucket._spawn_phys_material(name)
+
+    def _expand_prim_paths(self, prim_path_template: str) -> List[str]:
+        """将形如 '/World/envs/env_.*/Object_1' 的模板展开为每个 env 的实际 prim 路径。"""
+        # 简单替换：若模板包含 'env_.*/'，按 num_envs 展开
+        marker = "env_.*/"
+        if marker in prim_path_template:
+            paths = []
+            for i in range(self.num_envs):
+                paths.append(prim_path_template.replace(marker, f"env_{i}/"))
+            return paths
+        else:
+            return [prim_path_template]
+
+    # ---------------- 你已有的场景构建逻辑（示例占位） ----------------
+    def create_scene_cfg(self):
+        scenes = self.cfg.get("scenes", []) or []
         scenes_abspath = self.cfg.get("scenes_abspath")
         scenes_name = self.cfg.get("scenes_name")
+
         for scene in scenes:
-            if scene.get("scene_id") == scene_id:
-                from core.scenelib.utils.usd_utils import compute_usd_dims
+            if self.scene_id is None:
+                self.scene_id = scene.get("scene_id")
+            if scene.get("scene_id") != self.scene_id:
+                continue
 
-                flag = True
-                scene_path = scene.get("scene_path")
-                scene_abspath = os.path.join(scenes_abspath,scene_path)
-                filter_list = scene.get("filter_list")
-                rigidbody_list = scene.get("rigidbody_list")
-                articulation_list = scene.get("articulation_list")
-                print(f"About to create the “{scenes_name}” scene at path: {scene_abspath}")
-                objects_list = []
-                idx = 0
-                for obj in scene.get("objects"):
-                    obj_id = obj.get("obj_id")
-                    if obj_id in filter_list:
-                        continue
-                    obj_abspath = os.path.join(scene_abspath,obj.get("obj_path"))
-                    obj_translate = obj.get("obj_translate")
-                    obj_rotateXYZW = obj.get("obj_rotateXYZW")
-                    obj_scale = obj.get("obj_scale")
-                    obj_name = obj.get("obj_name")
-                    if obj_id in rigidbody_list:
-                        object_options = RigidOptions(
-                            kinematic_enabled=False,
-                            density=1000,
-                            )
-                        min_pt, max_pt = compute_usd_dims(obj_abspath)
-                        min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
-                        max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]    
-                        object = SceneObject(
-                            object_path=obj_abspath,
-                            options=object_options,
-                            translation=tuple(obj_translate),    
-                            rotation=tuple(obj_rotateXYZW),
-                            scale=tuple(obj_scale),
-                            object_type= "rigid",
-                            id=idx,
-                            object_dims = (min_x, max_x, min_y, max_y, min_z, max_z), # 除过scale后的尺寸
-                        )
-                        objects_list.append(object)
-                        print(f"Create rigidbody object,Idx: {idx}, obj_id: {obj_id}, obj_name: {obj_name}") 
-                    elif obj_id in articulation_list:
-                        min_pt, max_pt = compute_usd_dims(obj["Objpath"])
-                        min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
-                        max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]
+            scene_path = scene.get("scene_path")
+            scene_abspath = os.path.join(scenes_abspath, scene_path)
+            filter_list = set(scene.get("filter_list") or [])
+            rigidbody_list = set(scene.get("rigidbody_list") or [])
+            print(f"About to create the “{scenes_name}” scene at path: {scene_abspath}")
 
-                        object_options = ArticulationOptions(
-                            density=1000,
-                            kinematic_enabled=True,
-                            articulation_enabled=True,
-                            enabled_self_collisions=False,
-                            fix_root_link=True,
-                            )
-                        object = SceneObject(
-                            object_path=obj_abspath,
-                            options=object_options,
-                            translation=tuple(obj_translate),    
-                            rotation=tuple(obj_rotateXYZW),
-                            scale=tuple(obj_scale),
-                            object_type= "articulation",
-                            id=idx,
-                            object_dims = (min_x, max_x, min_y, max_y, min_z, max_z),
-                        )
-                        objects_list.append(object)
-                        print(f"Create articulation object,Idx: {idx}, obj_id: {obj_id}, obj_name: {obj_name}")                        
-                    else:
-                        raise ValueError(f"Object {obj_id} is not in the rigidbody_list or articulation_list.")
-                    idx += 1
-                break
-        if flag == False:
-            raise ValueError(f"Scene {scene_id} does not exist in the config file.")
-        return Scene(objects=objects_list)
+            for obj in scene.get("objects", []):
+                obj_id = obj.get("obj_id")
+                if obj_id in filter_list:
+                    continue
 
-    def create_scenes(self,terrain: SceneTerrain,scene_id: str = None) -> List[Scene]:
-        if scene_id is None:
-            scenes = self.cfg.get("scenes")
-            scene_id = scenes[0].get("scene_id")
-        scenes_list = []
+                obj_abspath = os.path.join(scene_abspath, obj.get("obj_path"))
+                pos = tuple(obj.get("obj_translate", [0.0, 0.0, 0.0]))
+                q = obj.get("obj_rotateXYZW", [0.0, 0.0, 0.0, 1.0])
+                rot_wxyz = (q[3], q[0], q[1], q[2])  # (w,x,y,z)
+                scale = tuple(obj.get("obj_scale", [1.0, 1.0, 1.0]))
 
-        scene = self.create_single_scene(scene_id)
-        scenes_list.append(scene)
-        assigned_scenes = list(scenes_list)
-        num_scenes = len(scenes_list)
-        if num_scenes < self.num_envs:
-            for i in range(self.num_envs - num_scenes):
-                scene = copy.deepcopy(assigned_scenes[0])
-                assigned_scenes.append(scene)
+                if obj_id in rigidbody_list:
+                    rigid_props = sim_utils.RigidBodyPropertiesCfg(rigid_body_enabled=True, kinematic_enabled=False)
+                    collision_props = sim_utils.CollisionPropertiesCfg(collision_enabled=True, contact_offset=0.002, rest_offset=0.0)
+                    mass_props = sim_utils.MassPropertiesCfg(density=None)
 
-        rigid_objects_counts = []
-        articulation_objects_counts = []
+                    spawn_cfg = sim_utils.UsdFileCfg(
+                        usd_path=str(obj_abspath),
+                        scale=scale,
+                        rigid_props=rigid_props,
+                        collision_props=collision_props,
+                        mass_props=mass_props,
+                        activate_contact_sensors=True,
+                    )
+                    name = f"Object_{obj_id}"
+                    self._rigid_objects_cfg_list[name] = RigidObjectCfg(
+                        prim_path=f"/World/envs/env_.*/{name}",
+                        spawn=spawn_cfg,
+                        init_state=RigidObjectCfg.InitialStateCfg(pos=pos, rot=rot_wxyz),
+                    )
+            break  # 只处理匹配的第一个 scene_id
 
-
-
-        for idx, scene in enumerate(assigned_scenes):
-            # x_offset = ((idx % terrain.num_scenes_per_column + 1) * terrain.spacing_between_scenes + terrain.border * terrain.horizontal_scale)
-            # y_offset = ((idx // terrain.num_scenes_per_column + 1) * terrain.spacing_between_scenes + terrain.scene_y_offset)
-            cx, cy = terrain.get_env_center([idx])     
-            x_offset = float(cx[0].item())
-            y_offset = float(cy[0].item())    
-            scene.offset = (x_offset, y_offset)
-            
-            # Compute integer grid location
-            logger.info("Assigned scene id %s to offset (%.2f, %.2f)", idx, x_offset, y_offset)
-            self._scene_offsets.append((x_offset, y_offset))
-        
-            # Check that all scenes have the same number of rigid/articulation objects
-            rigid_count = 0
-            articulation_count = 0
-            for obj in scene.objects:
-                if obj.object_type == "rigid":
-                    rigid_count += 1
-                elif obj.object_type == "articulation":
-                    articulation_count += 1
-                if obj.object_dims is None:
-                    logger.error(f"Scene {idx} object {obj.id} does not have dimensions")
-                    raise ValueError("Object does not have dimensions")
-            rigid_objects_counts.append(rigid_count)
-            articulation_objects_counts.append(articulation_count)
-
-        if len(set(rigid_objects_counts)) != 1:
-            logger.error("All scenes must have the same number of rigid_objects. Found counts: %s", rigid_objects_counts)
-            raise ValueError("Scenes have inconsistent number of rigid_objects: " + str(rigid_objects_counts))
-        if len(set(articulation_objects_counts)) != 1:
-            logger.error("All scenes must have the same number of articulation_objects. Found counts: %s", articulation_objects_counts)
-            raise ValueError("Scenes have inconsistent number of articulation_objects: " + str(articulation_objects_counts))
-
-        self.num_objects_per_scene = rigid_objects_counts[0] + articulation_objects_counts[0]
-
-        self._total_spawned_scenes = len(assigned_scenes)
-        self.scenes = assigned_scenes
-        # Automatically combine object motions so the user does not have to call it
-        # TODO:后续需要去优化object的motion的读取等。self.combine_object_motions()
-        return assigned_scenes
-    
-
-
-
-
-    @property
-    def total_spawned_scenes(self) -> int:
-        """Returns the total number of scenes that were spawned."""
-        return self._total_spawned_scenes
-
-    @property
-    def scene_offsets(self) -> List[Tuple[float, float]]:
-        """Returns the list of scene offsets."""
-        return self._scene_offsets
-
-    # @property
-    # def object_spawn_list(self) -> List[SpawnInfo]:
-    #     """Returns the list of canonical objects with their properties."""
-    #     return self._object_spawn_list
-
-    # @property
-    # def object_path_to_id(self) -> Dict[str, int]:
-    #     """Returns the mapping from object paths to their spawn list indices."""
-    #     return self._object_path_to_id
-
-
-# ----------------------------------------------------------------------------
-# Example usage:
-# if __name__ == "__main__":
-#     import torch
-    
-#     # Define a dummy Terrain for example usage
-#     class DummyTerrain:
-#         def __init__(self):
-#             self.num_scenes_per_column = 2
-#             self.spacing_between_scenes = 5.0
-#             self.border = 2.0
-#             self.horizontal_scale = 1.0
-#             self.scene_y_offset = 0.0
-#             self.device = "cpu"
-
-#         def is_valid_spawn_location(self, locations):
-#             return torch.tensor(True)
-
-#         def mark_scene_location(self, x, y):
-#             pass
-
-#     scene_lib = SceneLib(num_envs=4, device="cpu")
-
-#     # Create SceneObjects with options
-#     obj1 = SceneObject(
-#         object_path="cup.urdf",
-#         translation=(1.0, 0.0, 0.0),
-#         rotation=(0.0, 0.0, 0.0, 1.0),
-#         motion=ObjectMotion(
-#             frames=[
-#                 {"translation": (1.0, 0.0, 0.0), "rotation": (0.0, 0.0, 0.0, 1.0)},
-#                 {"translation": (1.5, 0.0, 0.0), "rotation": (0.0, 0.0, 0.0, 1.0)}
-#             ],
-#             fps=30.0
-#         ),
-#         options=ObjectOptions(
-#             vhacd_enabled=True,
-#             vhacd_params={
-#                 "resolution": 50000,
-#                 "max_convex_hulls": 128,
-#                 "max_num_vertices_per_ch": 64
-#             },
-#             fix_base_link=True
-#         )
-#     )
-
-#     obj2 = SceneObject(
-#         object_path="obstacle.urdf",
-#         options=ObjectOptions(
-#             vhacd_enabled=True,
-#             vhacd_params={"resolution": 50000},
-#             fix_base_link=True
-#         )
-#     )
-#     scene1 = Scene(id=1, objects=[obj1, obj2])
-
-#     obj3 = SceneObject(
-#         object_path="chair.urdf",
-#         translation=(2.0, 2.0, 0.0),
-#         options=ObjectOptions(
-#             vhacd_enabled=True,
-#             vhacd_params={"resolution": 50000},
-#             fix_base_link=True
-#         )
-#     )
-#     obj4 = SceneObject(
-#         object_path="table.urdf",
-#         translation=(2.5, 2.0, 0.0),
-#         options=ObjectOptions(
-#             vhacd_enabled=True,
-#             vhacd_params={"resolution": 50000},
-#             fix_base_link=True
-#         )
-#     )
-#     scene2 = Scene(id=2, objects=[obj3, obj4])
-
-#     scenes = [scene1, scene2]
-
-#     terrain = DummyTerrain()
-#     assigned_scenes = scene_lib.create_scenes(scenes, terrain, replicate_method="random")
-#     for idx, scene in enumerate(assigned_scenes):
-#         logger.info("Environment %d assigned Scene with objects %s with offset %s", idx, scene.objects, scene.offset)
-
-#     # get_object_pose now returns an ObjectState and combine_object_motions is automatically called in create_scenes()
-#     time = 1. / 30 * 0.5
-#     pose_obj0 = scene_lib.get_object_pose(object_indices=torch.tensor([0]), time=torch.tensor([time]))
-#     logger.info("Pose for object at index 0 at time %s:\nTranslations: %s\nRotations: %s", time, pose_obj0.translations, pose_obj0.rotations)
+    def count_objects(self):
+        self.num_objects_per_scene = len(self._rigid_objects_cfg_list)
