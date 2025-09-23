@@ -700,7 +700,7 @@ class BaseEnv:
         self.sync_motion_just_reset[wrapped_motions] = True
 
     def sample_obj_location(self, robot_states, env_ids):
-        
+        pass
 
 
 

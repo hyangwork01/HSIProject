@@ -161,5 +161,30 @@
             ],
             "justMyCode": false
         },
+        {
+        "name": "HSIProject: Debug 我的code",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/core/train_agent.py",
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder}",
+        "args": [
+            "+exp=hoi/base",
+            "+robot=smpl",
+            "+simulator=hoi_isaaclab",
+            "motion_file=data/motions/smpl_humanoid_walk.npy",
+            "+scene=object_toy",
+            "+experiment_name=hoi_test"
+        ],
+        "env": {
+            "HYDRA_FULL_ERROR": "1",
+            "PYTHONPATH": "${workspaceFolder}",
+            "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "justMyCode": false
+        /* 如需固定解释器，可加：
+        ,"python": "/home/luohy/anaconda3/envs/lhy_hsiproject/bin/python"
+        */
+        }
     ]
 }
