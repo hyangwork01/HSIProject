@@ -5,7 +5,7 @@ defaults:
 scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Home/Livingroom
 scenes_name: Livingroom
 scenes:
-  - scene_id: 2
+  - scene_id: 0
     scene_path: '002'
     filter_list: [14, 15, 16, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 
           184, 185, 186, 187, 188, 189, 190, 191]
@@ -1591,7 +1591,8 @@ scenes:
         obj_translate: [0.0, 0.0, 0.0]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: '004'
+    collections: []
+  - scene_id: 1
     scene_path: '004'
     filter_list: [63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
       79]
@@ -2291,7 +2292,8 @@ scenes:
         obj_translate: [0.0, 0.0, 0.0]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: '007'
+    collections: []
+  - scene_id: 2
     scene_path: '007'
     filter_list: [59, 60, 61, 62, 63, 65]
     rigidbody_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
@@ -2822,7 +2824,8 @@ scenes:
         obj_translate: [0.0, 0.0, 0.0]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: '005'
+    collections: []
+  - scene_id: 3
     scene_path: '005'
     filter_list: [74, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115,
       116, 117, 118, 119]
@@ -3782,7 +3785,8 @@ scenes:
         obj_translate: [0.0, 0.0, 0.0]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: '003'
+    collections: []
+  - scene_id: 4
     scene_path: '003'
     filter_list: [75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
       91]
@@ -4516,7 +4520,8 @@ scenes:
         obj_translate: [0.0, 0.0, 0.0]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: '006'
+    collections: []
+  - scene_id: 5
     scene_path: '006'
     filter_list: [91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 
           105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 
@@ -5474,7 +5479,8 @@ scenes:
         obj_translate: [0.0, 0.0, 0.0]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: '001'
+    collections: []
+  - scene_id: 6
     scene_path: '001'
     filter_list: [166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 
           178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 
@@ -7052,7 +7058,8 @@ scenes:
         obj_translate: [0.0, 0.0, 0.0]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: '008'
+    collections: []
+  - scene_id: 7
     scene_path: '008'
     filter_list: [201, 202, 203, 204, 228, 229, 230, 231, 232, 233, 234]
     rigidbody_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
@@ -8955,3 +8962,4 @@ scenes:
         obj_translate: [0.0, 0.0, 0.0]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
+    collections: []

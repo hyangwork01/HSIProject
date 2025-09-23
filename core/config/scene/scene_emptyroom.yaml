@@ -5,7 +5,7 @@ defaults:
 scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Home/Emptyroom
 scenes_name: Emptyroom
 scenes:
-  - scene_id: '001'
+  - scene_id: 0
     scene_path: '001'
     filter_list: []
     rigidbody_list: [0, 1, 2, 3]
@@ -39,3 +39,4 @@ scenes:
               1.0638498807907104]
         obj_rotateXYZW: [0.0, 0.0, -1.0, 6.123233995736766e-17]
         obj_scale: [1.0, 1.039600133895874, 1.0]
+    collections: []

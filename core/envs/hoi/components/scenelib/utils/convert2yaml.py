@@ -134,6 +134,7 @@ def preprocess_single_scene(single_scene_usd_path,scene_cfg):
     #     "objects": [],        
     # }
     objects = get_homeassets_list(single_scene_usd_path)
+    cnt = 0
     for id,home_asset in enumerate(objects):
         if home_asset["assetPath"] is None:
             raise ValueError("assetPath is None")
@@ -168,14 +169,18 @@ def preprocess_single_scene(single_scene_usd_path,scene_cfg):
 
 
         obj = {
-            "obj_id": id,
+            "obj_id": cnt,
             "obj_path": obj_path,
             "obj_name": home_asset["prim_category"],
             "obj_translate": to_flow(obj_translate),
             "obj_rotateXYZW": to_flow(obj_rotateXYZW),
             "obj_scale": to_flow(obj_scale),
         }
-        scene_cfg["objects"].append(obj)        
+        if obj["obj_name"] in filter_name_list:
+            continue
+
+        scene_cfg["objects"].append(obj)
+        cnt += 1        
 
 
 
@@ -202,8 +207,8 @@ def preprocess_single_scene(single_scene_usd_path,scene_cfg):
             if not flag:
                 raise ValueError(f"ID:{obj['obj_id']} Objname:{obj['obj_name']} 该物体没有rigidbody和articulation")
             
-        if obj["obj_name"] in filter_name_list:
-            scene_cfg["filter_list"].append(obj["obj_id"])
+        # if obj["obj_name"] in filter_name_list:
+        #     scene_cfg["filter_list"].append(obj["obj_id"])
 
     for id in scene_cfg["rigidbody_list"]:
         new_usd_path = os.path.join(os.path.dirname(single_scene_usd_path),obj["obj_path"])
@@ -216,34 +221,34 @@ def preprocess_single_scene(single_scene_usd_path,scene_cfg):
     #     json.dump(scene, f, ensure_ascii=False, indent=4)
     # print(f"导出完成：{json_path}")
     
-def preprocess_single_project(project_usd_path,scene_cfg):
+# def preprocess_single_project(project_usd_path,scene_cfg):
 
-    obj_dir_path = os.path.dirname(project_usd_path)
-    usd_file = os.path.basename(project_usd_path)
-    # 创建一个新的usda导出flatten的文件
-    name = usd_file
-    usd_path = os.path.join(obj_dir_path,usd_file)
+#     obj_dir_path = os.path.dirname(project_usd_path)
+#     usd_file = os.path.basename(project_usd_path)
+#     # 创建一个新的usda导出flatten的文件
+#     name = usd_file
+#     usd_path = os.path.join(obj_dir_path,usd_file)
 
 
-    min_pt, max_pt = compute_usd_dims(usd_path)
-    min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
-    max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]
+#     min_pt, max_pt = compute_usd_dims(usd_path)
+#     min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
+#     max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]
 
-    obj_translate = (0.0, 0.0, -min_z)
-    obj_rotateXYZW = (0.0, 0.0, 0.0, 1.0)
-    obj_scale = (1.0, 1.0, 1.0)
+#     obj_translate = (0.0, 0.0, -min_z)
+#     obj_rotateXYZW = (0.0, 0.0, 0.0, 1.0)
+#     obj_scale = (1.0, 1.0, 1.0)
 
-    obj = {
-        "obj_id": 0,
-        "obj_path": os.path.relpath(usd_path,obj_dir_path),
-        "obj_name": name.capitalize(),
-        "obj_translate": to_flow(obj_translate),
-        "obj_rotateXYZW": to_flow(obj_rotateXYZW),
-        "obj_scale": to_flow(obj_scale),
-    }
-    scene_cfg["objects"].append(obj)
-    # 先假设处理的物体全是RigidBody
-    scene_cfg["rigidbody_list"].append(obj["obj_id"])
+#     obj = {
+#         "obj_id": 0,
+#         "obj_path": os.path.relpath(usd_path,obj_dir_path),
+#         "obj_name": name.capitalize(),
+#         "obj_translate": to_flow(obj_translate),
+#         "obj_rotateXYZW": to_flow(obj_rotateXYZW),
+#         "obj_scale": to_flow(obj_scale),
+#     }
+#     scene_cfg["objects"].append(obj)
+#     # 先假设处理的物体全是RigidBody
+#     scene_cfg["rigidbody_list"].append(obj["obj_id"])
 
 
 def export_scene_yaml(usd_path,output_dir):
@@ -262,19 +267,20 @@ def export_scene_yaml(usd_path,output_dir):
                 conf_dict["scenes_name"] = name.capitalize()
                 conf_dict["scenes"] = []
 
+                cnt = 0 
                 for scene_name in os.listdir(dir_path): # 遍历所有的scene目录(001、002)
                     scene_path = os.path.join(dir_path, scene_name)
                     if os.path.isdir(scene_path):
                         for usd_file in os.listdir(scene_path): # 遍历每个scene目录下的所有文件
                             if os.path.basename(usd_file) == "Instance.usda":
                                 scene_cfg = {}
-                                scene_cfg["scene_id"] = scene_name
+                                scene_cfg["scene_id"] = cnt
                                 scene_cfg["scene_path"] = os.path.relpath(scene_path,dir_path)
                                 scene_cfg["filter_list"] = []
                                 scene_cfg["rigidbody_list"] = []
                                 scene_cfg["articulation_list"] = []
                                 scene_cfg["objects"] = []
-                                
+                                scene_cfg["collections"] = []
                                 usd_file_path = os.path.join(scene_path, usd_file)
 
                                 preprocess_single_scene(usd_file_path,scene_cfg)
@@ -282,7 +288,9 @@ def export_scene_yaml(usd_path,output_dir):
                                 scene_cfg["filter_list"] = to_flow(scene_cfg["filter_list"])
                                 scene_cfg["rigidbody_list"] = to_flow(scene_cfg["rigidbody_list"])
                                 scene_cfg["articulation_list"] = to_flow(scene_cfg["articulation_list"])
+                                scene_cfg["collections"] = to_flow(scene_cfg["collections"])
                                 conf_dict["scenes"].append(scene_cfg)
+                                cnt += 1
 
 
                 # 确保输出目录存在
@@ -308,26 +316,50 @@ def export_scene_yaml(usd_path,output_dir):
                 conf_dict["scenes_abspath"] = os.path.abspath(dir_path)
                 conf_dict["scenes_name"] = name.capitalize()
                 conf_dict["scenes"] = []
+                scene_cfg = {}
+                scene_cfg["scene_id"] = 0
+                scene_cfg["scene_path"] = "./"
+                scene_cfg["filter_list"] = []
+                scene_cfg["rigidbody_list"] = []
+                scene_cfg["articulation_list"] = []
+                scene_cfg["objects"] = []
+                scene_cfg["collections"] = []
+                cnt = 0
+
                 for usd_dir in os.listdir(dir_path):
                     if os.path.isdir(os.path.join(dir_path,usd_dir)):
                         obj_dir_path = os.path.join(dir_path,usd_dir)
                         for usd_file in os.listdir(obj_dir_path):
                             if os.path.basename(usd_file) == "Instance.usda":
-                                scene_cfg = {}
-                                scene_cfg["scene_id"] = usd_dir
-                                scene_cfg["scene_path"] = os.path.relpath(obj_dir_path,dir_path)
-                                scene_cfg["filter_list"] = []
-                                scene_cfg["rigidbody_list"] = []
-                                scene_cfg["articulation_list"] = []
-                                scene_cfg["objects"] = []
 
-                                preprocess_single_project(os.path.join(obj_dir_path,usd_file),scene_cfg)
+                                # 创建一个新的usda导出flatten的文件
+                                obj_usd_path = os.path.join(obj_dir_path,usd_file)
 
-                                conf_dict["scenes"].append(scene_cfg)
-                                
+
+                                min_pt, max_pt = compute_usd_dims(obj_usd_path)
+                                min_x, min_y, min_z = min_pt[0], min_pt[1], min_pt[2]
+                                max_x, max_y, max_z = max_pt[0], max_pt[1], max_pt[2]
+
+                                obj_translate = (0.0, 0.0, -min_z)
+                                obj_rotateXYZW = (0.0, 0.0, 0.0, 1.0)
+                                obj_scale = (1.0, 1.0, 1.0)
+
+                                obj = {
+                                    "obj_id": cnt,
+                                    "obj_path": os.path.relpath(obj_usd_path,os.path.join(conf_dict["scenes_abspath"],scene_cfg["scene_path"])),
+                                    "obj_name": name.capitalize(),
+                                    "obj_translate": to_flow(obj_translate),
+                                    "obj_rotateXYZW": to_flow(obj_rotateXYZW),
+                                    "obj_scale": to_flow(obj_scale),
+                                }
+                                scene_cfg["collections"].append(obj)
+                                cnt += 1                                
+
+
+                conf_dict["scenes"].append(scene_cfg)
                 # 确保输出目录存在
                 os.makedirs(output_dir, exist_ok=True)
-                yaml_path = os.path.join(output_dir, f"object_{name.lower()}.yaml")
+                yaml_path = os.path.join(output_dir, f"object_{conf_dict['scenes_name'].lower()}.yaml")
                 yaml = YAML()
                 yaml.indent(mapping=2, sequence=4, offset=2)
 
@@ -350,7 +382,7 @@ def export_scene_yaml(usd_path,output_dir):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="将 USD 场景物体相对变换导出为指定格式 YAML")
-    parser.add_argument("usd_dir",   help="输入一类的 USD 目录路径",nargs="?",default="/home/luohy/MyRepository/MyDataSets/Data/Object")
+    parser.add_argument("usd_dir",   help="输入一类的 USD 目录路径",nargs="?",default="/home/luohy/MyRepository/MyDataSets/Data/Home")
 
     args = parser.parse_args()
 

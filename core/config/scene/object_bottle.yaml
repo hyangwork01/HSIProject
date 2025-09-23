@@ -5,263 +5,130 @@ defaults:
 scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Object/bottle
 scenes_name: Bottle
 scenes:
-  - scene_id: 3FO3W17U5KPR
-    scene_path: 3FO3W17U5KPR
+  - scene_id: 0
+    scene_path: ./
     filter_list: []
-    rigidbody_list:
-      - 0
+    rigidbody_list: []
     articulation_list: []
-    objects:
+    objects: []
+    collections:
       - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+        obj_path: 3FO3W17U5KPR/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.09592419862747192]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3STJ29LR8
-    scene_path: 3FO3STJ29LR8
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 1
+        obj_path: 3FO3STJ29LR8/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.1288948506116867]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO441NJX1KV
-    scene_path: 3FO441NJX1KV
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 2
+        obj_path: 3FO441NJX1KV/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.09590300172567368]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4GQD7VKT4
-    scene_path: 3FO4GQD7VKT4
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 3
+        obj_path: 3FO4GQD7VKT4/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.0967198982834816]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3OA3NID1T
-    scene_path: 3FO3OA3NID1T
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 4
+        obj_path: 3FO3OA3NID1T/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.08077961206436157]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO441MJKRNU
-    scene_path: 3FO441MJKRNU
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 5
+        obj_path: 3FO441MJKRNU/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.09426440298557281]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4FBD9R7OK
-    scene_path: 3FO4FBD9R7OK
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 6
+        obj_path: 3FO4FBD9R7OK/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.10992699861526489]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4FBD9RHPN
-    scene_path: 3FO4FBD9RHPN
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 7
+        obj_path: 3FO4FBD9RHPN/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.057846300303936005]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3S36BP4TJ
-    scene_path: 3FO3S36BP4TJ
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 8
+        obj_path: 3FO3S36BP4TJ/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.16255447268486023]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3PKL2Q4SF
-    scene_path: 3FO3PKL2Q4SF
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 9
+        obj_path: 3FO3PKL2Q4SF/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.1012033224105835]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO441OD657E
-    scene_path: 3FO441OD657E
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 10
+        obj_path: 3FO441OD657E/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.10646799951791763]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4M09GVE4W
-    scene_path: 3FO4M09GVE4W
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 11
+        obj_path: 3FO4M09GVE4W/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.11764134466648102]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO441OADEM6
-    scene_path: 3FO441OADEM6
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 12
+        obj_path: 3FO441OADEM6/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.10444699972867966]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3T0VC16R3
-    scene_path: 3FO3T0VC16R3
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 13
+        obj_path: 3FO3T0VC16R3/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.11362858861684799]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VUQ6S4GU
-    scene_path: 3FO3VUQ6S4GU
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 14
+        obj_path: 3FO3VUQ6S4GU/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.14161765575408936]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3STIV7M5T
-    scene_path: 3FO3STIV7M5T
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 15
+        obj_path: 3FO3STIV7M5T/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.10453378409147263]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4K9UNE9LK
-    scene_path: 3FO4K9UNE9LK
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 16
+        obj_path: 3FO4K9UNE9LK/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.19714230298995972]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3TREPG9Y1
-    scene_path: 3FO3TREPG9Y1
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 17
+        obj_path: 3FO3TREPG9Y1/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.10935677587985992]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO441MDEKX7
-    scene_path: 3FO441MDEKX7
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 18
+        obj_path: 3FO441MDEKX7/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.06563089787960052]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO441MWRRO1
-    scene_path: 3FO441MWRRO1
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 19
+        obj_path: 3FO441MWRRO1/Instance.usda
+        obj_name: Bottle
         obj_translate: [0.0, 0.0, 0.09632260352373123]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]

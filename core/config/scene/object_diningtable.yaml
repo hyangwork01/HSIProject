@@ -5,263 +5,130 @@ defaults:
 scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Object/diningTable
 scenes_name: Diningtable
 scenes:
-  - scene_id: 3FO3WWARD1O4
-    scene_path: 3FO3WWARD1O4
+  - scene_id: 0
+    scene_path: ./
     filter_list: []
-    rigidbody_list:
-      - 0
+    rigidbody_list: []
     articulation_list: []
-    objects:
+    objects: []
+    collections:
       - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+        obj_path: 3FO3WWARD1O4/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.36226800084114075]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WB4E7KA1
-    scene_path: 3FO3WB4E7KA1
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 1
+        obj_path: 3FO3WB4E7KA1/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.35898101329803467]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4FSO2H76L
-    scene_path: 3FO4FSO2H76L
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 2
+        obj_path: 3FO4FSO2H76L/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3756377696990967]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WB3OR2O6
-    scene_path: 3FO3WB3OR2O6
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 3
+        obj_path: 3FO3WB3OR2O6/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3800939917564392]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WIXIE3RG
-    scene_path: 3FO3WIXIE3RG
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 4
+        obj_path: 3FO3WIXIE3RG/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3700000047683716]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4BGEF0DH2
-    scene_path: 3FO4BGEF0DH2
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 5
+        obj_path: 3FO4BGEF0DH2/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3748210072517395]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO47GGJIL4T
-    scene_path: 3FO47GGJIL4T
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 6
+        obj_path: 3FO47GGJIL4T/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3755809962749481]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO458OAFNL8
-    scene_path: 3FO458OAFNL8
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 7
+        obj_path: 3FO458OAFNL8/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.38005098700523376]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4AWJPVHU4
-    scene_path: 3FO4AWJPVHU4
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 8
+        obj_path: 3FO4AWJPVHU4/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3675000071525574]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3X2X7HCA1
-    scene_path: 3FO3X2X7HCA1
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 9
+        obj_path: 3FO3X2X7HCA1/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.36678001284599304]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4LJ6O1SS5
-    scene_path: 3FO4LJ6O1SS5
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 10
+        obj_path: 3FO4LJ6O1SS5/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.36024999618530273]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4AX4OSFI0
-    scene_path: 3FO4AX4OSFI0
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 11
+        obj_path: 3FO4AX4OSFI0/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3684999942779541]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VOD6CXV9
-    scene_path: 3FO3VOD6CXV9
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 12
+        obj_path: 3FO3VOD6CXV9/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.38000011444091797]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WB3GX9PA
-    scene_path: 3FO3WB3GX9PA
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 13
+        obj_path: 3FO3WB3GX9PA/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.38050299882888794]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4F8I348LJ
-    scene_path: 3FO4F8I348LJ
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 14
+        obj_path: 3FO4F8I348LJ/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.37749698758125305]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO451G2UD9W
-    scene_path: 3FO451G2UD9W
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 15
+        obj_path: 3FO451G2UD9W/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3906799852848053]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WWCNAD36
-    scene_path: 3FO3WWCNAD36
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 16
+        obj_path: 3FO3WWCNAD36/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.36607301235198975]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WB4JAMVA
-    scene_path: 3FO3WB4JAMVA
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 17
+        obj_path: 3FO3WB4JAMVA/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3800390064716339]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO4AYGVYYEB
-    scene_path: 3FO4AYGVYYEB
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 18
+        obj_path: 3FO4AYGVYYEB/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.375]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO456K27RJ8
-    scene_path: 3FO456K27RJ8
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 19
+        obj_path: 3FO456K27RJ8/Instance.usda
+        obj_name: Diningtable
         obj_translate: [0.0, 0.0, 0.3541490137577057]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]

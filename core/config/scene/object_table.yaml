@@ -5,263 +5,130 @@ defaults:
 scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Object/table
 scenes_name: Table
 scenes:
-  - scene_id: 3FO3X30EAQL2
-    scene_path: 3FO3X30EAQL2
+  - scene_id: 0
+    scene_path: ./
     filter_list: []
-    rigidbody_list:
-      - 0
+    rigidbody_list: []
     articulation_list: []
-    objects:
+    objects: []
+    collections:
       - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+        obj_path: 3FO3X30EAQL2/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.375]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO44W9VNNJ1
-    scene_path: 3FO44W9VNNJ1
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 1
+        obj_path: 3FO44W9VNNJ1/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.22487300634384155]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQUBCRIH
-    scene_path: 3FO3WQUBCRIH
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 2
+        obj_path: 3FO3WQUBCRIH/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.37541601061820984]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQU0WJN9
-    scene_path: 3FO3WQU0WJN9
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 3
+        obj_path: 3FO3WQU0WJN9/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.4610530138015747]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQT7FQR5
-    scene_path: 3FO3WQT7FQR5
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 4
+        obj_path: 3FO3WQT7FQR5/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.3718529939651489]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQTXN9EJ
-    scene_path: 3FO3WQTXN9EJ
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 5
+        obj_path: 3FO3WQTXN9EJ/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.39488500356674194]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQU0WTOC
-    scene_path: 3FO3WQU0WTOC
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 6
+        obj_path: 3FO3WQU0WTOC/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.39337798953056335]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQTXNCQK
-    scene_path: 3FO3WQTXNCQK
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 7
+        obj_path: 3FO3WQTXNCQK/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.3799999952316284]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WXFAC7EG
-    scene_path: 3FO3WXFAC7EG
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 8
+        obj_path: 3FO3WXFAC7EG/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.5043370127677917]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQTK5TX9
-    scene_path: 3FO3WQTK5TX9
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 9
+        obj_path: 3FO3WQTK5TX9/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.37505701184272766]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WWEETCVD
-    scene_path: 3FO3WWEETCVD
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 10
+        obj_path: 3FO3WWEETCVD/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.32888999581336975]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO44VVOD8VW
-    scene_path: 3FO44VVOD8VW
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 11
+        obj_path: 3FO44VVOD8VW/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.28112199902534485]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQTFN172
-    scene_path: 3FO3WQTFN172
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 12
+        obj_path: 3FO3WQTFN172/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.37987300753593445]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQTBE3EI
-    scene_path: 3FO3WQTBE3EI
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 13
+        obj_path: 3FO3WQTBE3EI/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.37150898575782776]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WWD8NSMJ
-    scene_path: 3FO3WWD8NSMJ
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 14
+        obj_path: 3FO3WWD8NSMJ/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.36248698830604553]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQTXN2PH
-    scene_path: 3FO3WQTXN2PH
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 15
+        obj_path: 3FO3WQTXN2PH/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.3749920129776001]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQTK5QL8
-    scene_path: 3FO3WQTK5QL8
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 16
+        obj_path: 3FO3WQTK5QL8/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.3902760148048401]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO44VVWVHU4
-    scene_path: 3FO44VVWVHU4
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 17
+        obj_path: 3FO44VVWVHU4/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.3685910105705261]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO44VW6Q81Q
-    scene_path: 3FO44VW6Q81Q
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 18
+        obj_path: 3FO44VW6Q81Q/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.38499999046325684]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WQTE8FT8
-    scene_path: 3FO3WQTE8FT8
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 19
+        obj_path: 3FO3WQTE8FT8/Instance.usda
+        obj_name: Table
         obj_translate: [0.0, 0.0, 0.3700050115585327]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]

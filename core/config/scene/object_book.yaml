@@ -5,263 +5,130 @@ defaults:
 scenes_abspath: /home/luohy/MyRepository/MyDataSets/Data/Object/book
 scenes_name: Book
 scenes:
-  - scene_id: 3FO3VG61SNOA
-    scene_path: 3FO3VG61SNOA
+  - scene_id: 0
+    scene_path: ./
     filter_list: []
-    rigidbody_list:
-      - 0
+    rigidbody_list: []
     articulation_list: []
-    objects:
+    objects: []
+    collections:
       - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+        obj_path: 3FO3VG61SNOA/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.004010822158306837]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3W6JEFGX8
-    scene_path: 3FO3W6JEFGX8
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 1
+        obj_path: 3FO3W6JEFGX8/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.12276200205087662]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG626NF6
-    scene_path: 3FO3VG626NF6
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 2
+        obj_path: 3FO3VG626NF6/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.015442008152604103]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3WWN6J33T
-    scene_path: 3FO3WWN6J33T
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 3
+        obj_path: 3FO3WWN6J33T/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.12467300146818161]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3W655IK9U
-    scene_path: 3FO3W655IK9U
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 4
+        obj_path: 3FO3W655IK9U/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.14707350730895996]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG6VJLCL
-    scene_path: 3FO3VG6VJLCL
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 5
+        obj_path: 3FO3VG6VJLCL/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.007402544841170311]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3W5J0KUJK
-    scene_path: 3FO3W5J0KUJK
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 6
+        obj_path: 3FO3W5J0KUJK/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.08499789983034134]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3W6JEFQYB
-    scene_path: 3FO3W6JEFQYB
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 7
+        obj_path: 3FO3W6JEFQYB/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.15092599391937256]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG61KG4T
-    scene_path: 3FO3VG61KG4T
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 8
+        obj_path: 3FO3VG61KG4T/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.008864161558449268]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3W6H3EGN2
-    scene_path: 3FO3W6H3EGN2
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 9
+        obj_path: 3FO3W6H3EGN2/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.1628739982843399]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG6510TV
-    scene_path: 3FO3VG6510TV
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 10
+        obj_path: 3FO3VG6510TV/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.009862784296274185]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG6TGP4S
-    scene_path: 3FO3VG6TGP4S
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 11
+        obj_path: 3FO3VG6TGP4S/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.011134117841720581]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG6THA6Y
-    scene_path: 3FO3VG6THA6Y
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 12
+        obj_path: 3FO3VG6THA6Y/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.010108633898198605]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3W6JEFKA9
-    scene_path: 3FO3W6JEFKA9
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 13
+        obj_path: 3FO3W6JEFKA9/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.12238200008869171]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG9LH2M9
-    scene_path: 3FO3VG9LH2M9
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 14
+        obj_path: 3FO3VG9LH2M9/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.012370634824037552]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3W6JEFNMA
-    scene_path: 3FO3W6JEFNMA
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 15
+        obj_path: 3FO3W6JEFNMA/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.1228410005569458]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG9LF93P
-    scene_path: 3FO3VG9LF93P
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 16
+        obj_path: 3FO3VG9LF93P/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.011133873835206032]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG6SYEWM
-    scene_path: 3FO3VG6SYEWM
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 17
+        obj_path: 3FO3VG6SYEWM/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.010571455582976341]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3W5J15CNE
-    scene_path: 3FO3W5J15CNE
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 18
+        obj_path: 3FO3W5J15CNE/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.08420799672603607]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
-  - scene_id: 3FO3VG6SYBKL
-    scene_path: 3FO3VG6SYBKL
-    filter_list: []
-    rigidbody_list:
-      - 0
-    articulation_list: []
-    objects:
-      - obj_id: 0
-        obj_path: Instance.usda
-        obj_name: Instance.usda
+      - obj_id: 19
+        obj_path: 3FO3VG6SYBKL/Instance.usda
+        obj_name: Book
         obj_translate: [0.0, 0.0, 0.00785132497549057]
         obj_rotateXYZW: [0.0, 0.0, 0.0, 1.0]
         obj_scale: [1.0, 1.0, 1.0]
