@@ -13,7 +13,7 @@ from core.simulator.base_simulator.robot_state import RobotState
 from core.envs.hoi.env_utils.humanoid_utils import (
     compute_humanoid_reset,
 )
-from core.envs.hoi.components.terrains.hoi_terrain import SceneTerrain
+from core.envs.hoi.components.terrains.terrain import SceneTerrain
 from core.envs.hoi.components.terrains.utils.terrain_config import TerrainConfig
 from core.envs.hoi.components.obs.humanoid_obs import HumanoidObs
 from core.envs.hoi.components.obs.terrain_obs import TerrainObs

@@ -176,11 +176,11 @@
             "+scene=object_toy",
             "+experiment_name=hoi_test"
         ],
-        "env": {
-            "HYDRA_FULL_ERROR": "1",
-            "PYTHONPATH": "${workspaceFolder}",
-            "CUDA_VISIBLE_DEVICES": "0"
-        },
+        // "env": {
+        //     "HYDRA_FULL_ERROR": "1",
+        //     "PYTHONPATH": "${workspaceFolder}",
+        //     "CUDA_VISIBLE_DEVICES": "0"
+        // },
         "justMyCode": false
         /* 如需固定解释器，可加：
         ,"python": "/home/luohy/anaconda3/envs/lhy_hsiproject/bin/python"

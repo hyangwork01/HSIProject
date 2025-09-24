@@ -727,7 +727,7 @@ class IsaacLabSimulator(Simulator):
         """
         if not self.headless:
             if not hasattr(self, "_perspective_view"):
-                from core.simulator.myisaaclab.utils.perspective_viewer import (
+                from core.simulator.hoi_isaaclab.utils.perspective_viewer import (
                     PerspectiveViewer,
                 )
 

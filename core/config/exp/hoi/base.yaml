@@ -7,6 +7,7 @@ defaults:
   - /agent/masked_mimic/models/encoder
   - /agent/masked_mimic/models/prior
   - /agent/masked_mimic/models/text_conditioning
+  - /terrain/hoi
   # - /terrain/complex
   # - /agent/masked_mimic/models/terrain
   - /agent/mimic/options/global_tracking

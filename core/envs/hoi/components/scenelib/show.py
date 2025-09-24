@@ -7,8 +7,8 @@ from omegaconf import OmegaConf
 
 import torch
 
-from core.simulator.myisaaclab.config import IsaacLabSimulatorConfig, IsaacLabSimParams
-from core.simulator.myisaaclab.simulator import IsaacLabSimulator
+from core.simulator.hoi_isaaclab.config import IsaacLabSimulatorConfig, IsaacLabSimParams
+from core.simulator.hoi_isaaclab.simulator import IsaacLabSimulator
 from core.simulator.base_simulator.config import (
     RobotConfig,
     RobotAssetConfig,

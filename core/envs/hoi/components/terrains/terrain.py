@@ -8,19 +8,19 @@ from core.envs.hoi.components.terrains.utils.terrain_utils import (
 from core.envs.hoi.components.terrains.utils.terrain_config import TerrainConfig
 
 import matplotlib.pyplot as plt
-from core.envs.hoi.components.terrains.base import BaseTerrain
 import math
 
-class SceneTerrain(BaseTerrain):
+class SceneTerrain:
 
     def __init__(self, config: TerrainConfig, num_envs: int, device) -> None:
+        self.config = config
+        self.device = device
+        self.num_envs = num_envs
+
         config.load_terrain = False
         config.save_terrain = False
         self.terrain_type = "Flatten" # 默认是平地，也可以修改为Trimesh
 
-        self.config = config
-        self.device = device
-        self.num_scenes = num_envs
 
         self.spacing_between_scenes = config.spacing_between_scenes
 

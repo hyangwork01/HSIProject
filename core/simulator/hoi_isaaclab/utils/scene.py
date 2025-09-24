@@ -3,16 +3,16 @@ from core.simulator.base_simulator.config import RobotConfig
 import isaaclab.sim as sim_utils
 from isaaclab.assets import ArticulationCfg, AssetBaseCfg
 from isaaclab.actuators import IdealPDActuatorCfg
-from myisaaclab.utils import configclass
+from isaaclab.utils import configclass
 from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.sensors import ContactSensorCfg
 from isaaclab.terrains.terrain_importer_cfg import TerrainImporterCfg
 from isaaclab.assets import RigidObjectCfg
 from isaaclab.utils.assets import ISAACLAB_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR
-from core.simulator.myisaaclab.utils.usd_utils import (
+from core.simulator.hoi_isaaclab.utils.usd_utils import (
     TrimeshTerrainImporter,
 )
-from core.simulator.myisaaclab.utils.robots import (
+from core.simulator.hoi_isaaclab.utils.robots import (
     SMPL_CFG,
     SMPLX_CFG,
     H1_CFG,
